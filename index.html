@@ -14,29 +14,28 @@
   --white:#ffffff;
   --gradient:linear-gradient(135deg,#fe5f52,#ee356c);
   --font:'Poppins',Calibri,sans-serif;
+  --sidebar-w:220px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:var(--font);background:var(--grey);color:var(--blue);min-height:100vh}
 
 /* ── Top bar ── */
-.topbar{background:var(--blue);color:#fff;padding:0 28px;display:flex;align-items:center;justify-content:space-between;height:60px;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(61,75,83,.3)}
-.topbar-brand{display:flex;align-items:center;gap:12px}
-.topbar-logo{width:32px;height:32px;flex-shrink:0}
-.topbar-wordmark{font-size:18px;font-weight:700;letter-spacing:.5px;background:var(--gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.topbar-divider{width:1px;height:20px;background:rgba(255,255,255,.2);margin:0 4px}
-.topbar h1{font-size:14px;font-weight:500;color:rgba(255,255,255,.75);letter-spacing:.2px}
-.topbar .meta{font-size:11px;color:rgba(255,255,255,.45);margin-left:10px}
+.topbar{background:var(--blue);color:#fff;padding:0 20px;display:flex;align-items:center;justify-content:space-between;height:56px;position:sticky;top:0;z-index:200;box-shadow:0 2px 12px rgba(61,75,83,.3)}
+.topbar-brand{display:flex;align-items:center;gap:10px}
+.topbar-logo{width:28px;height:28px;flex-shrink:0}
+.topbar-wordmark{font-size:17px;font-weight:700;letter-spacing:.5px;background:var(--gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.topbar-divider{width:1px;height:18px;background:rgba(255,255,255,.2)}
+.topbar h1{font-size:13px;font-weight:500;color:rgba(255,255,255,.7)}
+.topbar .meta{font-size:11px;color:rgba(255,255,255,.4);margin-left:8px}
 .topbar-right{display:flex;gap:8px;align-items:center}
-.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;border:none;transition:.15s;font-family:var(--font)}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:6px 13px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;border:none;transition:.15s;font-family:var(--font)}
 .btn-ghost{background:rgba(255,255,255,.1);color:#fff}.btn-ghost:hover{background:rgba(255,255,255,.2)}
-.btn-primary{background:var(--gradient);color:#fff;border:none}.btn-primary:hover{opacity:.9}
-.btn-success{background:#059669;color:#fff}.btn-success:hover{background:#047857}
+.btn-primary{background:var(--gradient);color:#fff}.btn-primary:hover{opacity:.9}
 .btn-sm{padding:5px 10px;font-size:11px}
 
 /* ── Upload screen ── */
-#upload-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:calc(100vh - 60px);padding:40px 20px}
-.upload-card{background:#fff;border-radius:16px;padding:48px 56px;max-width:520px;width:100%;text-align:center;box-shadow:0 4px 24px rgba(61,75,83,.12)}
-.upload-icon{font-size:48px;margin-bottom:16px}
+#upload-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:calc(100vh - 56px);padding:40px 20px}
+.upload-card{background:#fff;border-radius:16px;padding:48px 56px;max-width:500px;width:100%;text-align:center;box-shadow:0 4px 24px rgba(61,75,83,.12)}
 .upload-card h2{font-size:22px;font-weight:700;margin-bottom:8px;color:var(--blue)}
 .upload-card p{color:#666;font-size:14px;margin-bottom:28px;line-height:1.6}
 .drop-zone{border:2px dashed #d0d5d8;border-radius:12px;padding:32px;cursor:pointer;transition:.2s;background:#fafbfb}
@@ -45,59 +44,73 @@ body{font-family:var(--font);background:var(--grey);color:var(--blue);min-height
 .drop-zone label{cursor:pointer;font-size:14px;color:#555;display:block;font-family:var(--font)}
 .drop-zone label strong{color:var(--orange)}
 .drop-zone .hint{font-size:12px;color:#999;margin-top:8px}
-.import-row{margin-top:20px;display:flex;align-items:center;gap:10px;justify-content:center}
+.import-row{margin-top:18px;display:flex;align-items:center;gap:10px;justify-content:center}
 .import-row span{font-size:12px;color:#999}
 
-/* ── Dashboard ── */
-#dashboard{display:none;padding:24px 28px}
-.summary-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-bottom:24px}
-.stat-card{background:#fff;border-radius:10px;padding:18px 22px;box-shadow:0 1px 4px rgba(61,75,83,.08)}
-.stat-card .n{font-size:32px;font-weight:700;line-height:1}
-.stat-card .l{font-size:12px;color:#888;margin-top:5px;font-weight:500}
-.stat-card.conflict .n{color:var(--magenta)}
+/* ── Dashboard layout ── */
+#dashboard{display:none}
+.dash-body{display:flex;min-height:calc(100vh - 56px)}
+
+/* ── Sidebar ── */
+.sidebar{width:var(--sidebar-w);flex-shrink:0;background:#fff;border-right:1px solid #e4e8ea;position:sticky;top:56px;height:calc(100vh - 56px);overflow-y:auto;display:flex;flex-direction:column}
+.sidebar-header{padding:16px 16px 10px;border-bottom:1px solid #eef0f2}
+.sidebar-header h3{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#aaa}
+.sidebar-search{margin:10px 10px 6px;position:relative}
+.sidebar-search input{width:100%;padding:7px 10px 7px 30px;border:1px solid #e0e4e6;border-radius:8px;font-size:12px;font-family:var(--font);color:var(--blue);outline:none;background:#fafbfb}
+.sidebar-search input:focus{border-color:var(--orange)}
+.sidebar-search .s-icon{position:absolute;left:9px;top:50%;transform:translateY(-50%);font-size:13px;color:#bbb}
+.sidebar-list{flex:1;padding:6px 0 20px}
+.sidebar-item{display:flex;align-items:center;justify-content:space-between;padding:9px 16px;cursor:pointer;transition:.12s;border-left:3px solid transparent;gap:8px}
+.sidebar-item:hover{background:#fdf5f5;border-left-color:var(--orange)}
+.sidebar-item.active{background:#fff0ee;border-left-color:var(--orange)}
+.sidebar-item.active .si-name{color:var(--orange);font-weight:700}
+.si-name{font-size:13px;font-weight:600;color:var(--blue);line-height:1.3;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sidebar-item.all-item .si-name{color:var(--blue)}
+.si-count{display:inline-flex;align-items:center;justify-content:center;background:var(--grey);color:#666;border-radius:20px;font-size:10px;font-weight:700;padding:1px 7px;white-space:nowrap;flex-shrink:0}
+.sidebar-item.active .si-count{background:var(--orange);color:#fff}
+
+/* ── Main content ── */
+.main{flex:1;padding:22px 24px;min-width:0;overflow:hidden}
+
+/* Summary cards */
+.summary-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:18px}
+.stat-card{background:#fff;border-radius:10px;padding:16px 18px;box-shadow:0 1px 4px rgba(61,75,83,.07);border-top:3px solid transparent}
+.stat-card .n{font-size:28px;font-weight:700;line-height:1}
+.stat-card .l{font-size:11px;color:#888;margin-top:4px;font-weight:500;line-height:1.3}
+.stat-card.partners{border-top-color:var(--magenta)}.stat-card.partners .n{color:var(--magenta)}
+.stat-card.clients{border-top-color:var(--orange)}.stat-card.clients .n{color:var(--orange)}
+.stat-card.conflict{border-top-color:#c026d3}.stat-card.conflict .n{color:#c026d3}
 .stat-card.incorrect .n{color:var(--orange)}
 .stat-card.missing .n{color:#d97706}
 .stat-card.typo .n{color:var(--blue)}
-.stat-card.done .n{color:#059669}
+.stat-card.done{border-top-color:#059669}.stat-card.done .n{color:#059669}
 
 /* progress */
-.progress-bar-wrap{background:#fff;border-radius:10px;padding:18px 22px;margin-bottom:24px;box-shadow:0 1px 4px rgba(61,75,83,.08)}
-.progress-bar-wrap .label{font-size:13px;font-weight:600;margin-bottom:10px;display:flex;justify-content:space-between;color:var(--blue)}
-.progress-track{height:10px;background:var(--grey);border-radius:99px;overflow:hidden}
+.progress-bar-wrap{background:#fff;border-radius:10px;padding:14px 18px;margin-bottom:18px;box-shadow:0 1px 4px rgba(61,75,83,.07)}
+.progress-bar-wrap .label{font-size:12px;font-weight:600;margin-bottom:8px;display:flex;justify-content:space-between;color:var(--blue)}
+.progress-track{height:8px;background:var(--grey);border-radius:99px;overflow:hidden}
 .progress-fill{height:100%;background:var(--gradient);border-radius:99px;transition:.4s}
 
-/* ── Controls ── */
-.controls{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:20px;align-items:center}
-.controls select,.controls input[type=text]{padding:8px 12px;border:1px solid #d0d5d8;border-radius:8px;font-size:13px;background:#fff;color:var(--blue);outline:none;font-family:var(--font)}
+/* Controls */
+.controls{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;align-items:center}
+.controls select,.controls input[type=text]{padding:7px 11px;border:1px solid #d0d5d8;border-radius:8px;font-size:12px;background:#fff;color:var(--blue);outline:none;font-family:var(--font)}
 .controls select:focus,.controls input:focus{border-color:var(--orange)}
 .controls .spacer{flex:1}
 
-/* ── Partner tabs ── */
-.tabs-wrap{position:relative;margin-bottom:20px}
-.tabs-wrap::after{content:'';position:absolute;right:0;top:0;bottom:2px;width:64px;background:linear-gradient(to right,transparent,var(--grey));pointer-events:none}
-.tabs-scroll-hint{position:absolute;right:8px;top:50%;transform:translateY(-60%);font-size:18px;color:var(--magenta);font-weight:700;pointer-events:none;z-index:2}
-.tabs{display:flex;gap:0;border-bottom:2px solid #e0e4e6;overflow-x:auto;scrollbar-width:none}
-.tabs::-webkit-scrollbar{display:none}
-.tab{padding:10px 18px;font-size:13px;font-weight:700;color:var(--blue);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;white-space:nowrap;transition:.15s;opacity:.55}
-.tab:hover{opacity:1;color:var(--orange)}
-.tab.active{color:var(--blue);border-bottom-color:var(--orange);opacity:1}
-.tab .count{display:inline-flex;align-items:center;justify-content:center;background:var(--grey);color:#555;border-radius:20px;font-size:10px;padding:1px 7px;margin-left:6px;font-weight:700}
-.tab.active .count{background:var(--orange);color:#fff}
-
-/* ── Table ── */
-.table-wrap{background:#fff;border-radius:12px;box-shadow:0 1px 4px rgba(61,75,83,.08);overflow:hidden}
-table{width:100%;border-collapse:collapse;font-size:13px}
-th{text-align:left;padding:11px 14px;background:var(--blue);color:#fff;font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.05em;border-bottom:none;white-space:nowrap;font-family:var(--font)}
-td{padding:11px 14px;border-bottom:1px solid var(--grey);vertical-align:top}
+/* Table */
+.table-wrap{background:#fff;border-radius:12px;box-shadow:0 1px 4px rgba(61,75,83,.07);overflow:hidden}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{text-align:left;padding:10px 12px;background:var(--blue);color:#fff;font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap;font-family:var(--font)}
+td{padding:10px 12px;border-bottom:1px solid var(--grey);vertical-align:top}
 tr:last-child td{border-bottom:none}
 tr:hover td{background:#fdf8f8}
-.item-name{font-weight:600;font-size:13px;margin-bottom:2px;color:var(--blue)}
-.item-partner{font-size:12px;font-weight:700;color:var(--magenta);margin-bottom:2px}
-.item-desc{font-size:11px;color:#888;margin-top:3px;line-height:1.45}
-.row-num{color:#bbb;font-size:11px}
+.item-partner{font-size:11px;font-weight:700;color:var(--magenta);margin-bottom:2px}
+.item-name{font-weight:600;font-size:12px;color:var(--blue);line-height:1.3}
+.item-desc{font-size:11px;color:#999;margin-top:2px;line-height:1.4}
+.row-num{color:#ccc;font-size:11px}
 
 /* badges */
-.badge{display:inline-flex;align-items:center;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:700;white-space:nowrap}
+.badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700;white-space:nowrap}
 .badge-conflict{background:#fce4ed;color:var(--magenta)}
 .badge-incorrect{background:#fff0ee;color:var(--orange)}
 .badge-missing{background:#fef3c7;color:#92400e}
@@ -107,32 +120,51 @@ tr:hover td{background:#fdf8f8}
 .badge-low{background:#d1fae5;color:#065f46}
 
 /* status */
-.status-sel{padding:5px 10px;border-radius:7px;font-size:12px;font-weight:600;border:none;cursor:pointer;outline:none;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23888'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center;padding-right:24px;min-width:120px;font-family:var(--font)}
+.status-sel{padding:4px 22px 4px 8px;border-radius:6px;font-size:11px;font-weight:600;border:none;cursor:pointer;outline:none;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23888'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 6px center;min-width:110px;font-family:var(--font)}
 .status-open{background:#fff0ee;color:#c0392b}
 .status-inprogress{background:#fef3c7;color:#92400e}
 .status-fixed{background:#d1fae5;color:#065f46}
 .status-wontfix{background:var(--grey);color:#6b7280}
 
-.notes-input{width:100%;border:1px solid #e0e4e6;border-radius:6px;padding:5px 8px;font-size:11px;font-family:var(--font);resize:none;min-height:34px;outline:none;color:var(--blue);background:#fafbfb}
+.notes-input{width:100%;border:1px solid #e0e4e6;border-radius:6px;padding:4px 7px;font-size:11px;font-family:var(--font);resize:none;min-height:32px;outline:none;color:var(--blue);background:#fafbfb}
 .notes-input:focus{border-color:var(--orange);background:#fff}
-.assignee-input{width:100%;border:1px solid #e0e4e6;border-radius:6px;padding:5px 8px;font-size:11px;font-family:var(--font);outline:none;color:var(--blue);background:#fafbfb}
+.assignee-input{width:100%;border:1px solid #e0e4e6;border-radius:6px;padding:4px 7px;font-size:11px;font-family:var(--font);outline:none;color:var(--blue);background:#fafbfb}
 .assignee-input:focus{border-color:var(--orange)}
 
-.fix-text{font-size:12px;color:#059669;font-weight:600;line-height:1.4}
-.detail-text{font-size:12px;color:#555;line-height:1.4}
+.fix-text{font-size:11px;color:#059669;font-weight:600;line-height:1.4;margin-top:4px}
+.detail-text{font-size:11px;color:#555;line-height:1.4}
+.empty-state{text-align:center;padding:48px;color:#888;font-size:13px}
 
-.empty-state{text-align:center;padding:48px;color:#888;font-size:14px}
+/* clickable card */
+.stat-card.clickable{cursor:pointer;transition:.15s}
+.stat-card.clickable:hover{transform:translateY(-2px);box-shadow:0 4px 16px rgba(61,75,83,.14)}
+.stat-card.clickable .hint-label{font-size:10px;color:var(--orange);font-weight:600;margin-top:6px;display:flex;align-items:center;gap:3px}
+
+/* modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(30,30,40,.45);z-index:500;display:flex;align-items:center;justify-content:center;padding:20px}
+.modal{background:#fff;border-radius:14px;max-width:480px;width:100%;box-shadow:0 8px 40px rgba(0,0,0,.18);overflow:hidden}
+.modal-header{background:var(--blue);color:#fff;padding:18px 22px;display:flex;align-items:center;justify-content:space-between}
+.modal-header h2{font-size:15px;font-weight:700}
+.modal-header .close-btn{background:rgba(255,255,255,.15);border:none;color:#fff;width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;font-family:var(--font)}
+.modal-header .close-btn:hover{background:rgba(255,255,255,.25)}
+.modal-body{padding:20px 22px;max-height:60vh;overflow-y:auto}
+.client-row{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--grey)}
+.client-row:last-child{border-bottom:none}
+.client-name{font-size:13px;font-weight:600;color:var(--blue)}
+.client-issues{font-size:11px;color:#888;font-weight:500}
+.client-badge{display:inline-flex;align-items:center;justify-content:center;background:#fff0ee;color:var(--orange);border-radius:20px;font-size:11px;font-weight:700;padding:2px 9px}
 
 /* share banner */
-.share-banner{background:var(--blue);color:#fff;border-radius:10px;padding:14px 20px;margin-bottom:20px;display:flex;align-items:center;gap:14px;font-size:13px}
-.share-banner strong{font-size:14px}
-.share-banner p{color:rgba(255,255,255,.6);font-size:12px;margin-top:2px}
+.share-banner{background:var(--blue);color:#fff;border-radius:10px;padding:12px 16px;margin-bottom:18px;display:flex;align-items:flex-start;gap:12px;font-size:12px}
+.share-banner strong{font-size:13px}
+.share-banner p{color:rgba(255,255,255,.6);font-size:11px;margin-top:2px;line-height:1.5}
 
-/* ── Mobile ── */
-@media(max-width:768px){
-  #dashboard{padding:16px}
-  .summary-row{grid-template-columns:repeat(2,1fr)}
-  th:nth-child(n+5),td:nth-child(n+5){display:none}
+.result-label{font-size:11px;color:#aaa;font-weight:500}
+
+@media(max-width:900px){
+  .sidebar{display:none}
+  .main{padding:16px}
+  th:nth-child(n+6),td:nth-child(n+6){display:none}
 }
 </style>
 </head>
@@ -141,7 +173,6 @@ tr:hover td{background:#fdf8f8}
 <!-- Top bar -->
 <div class="topbar">
   <div class="topbar-brand">
-    <!-- Cutting board icon (gradient) -->
     <svg class="topbar-logo" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
       <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#fe5f52"/><stop offset="100%" stop-color="#ee356c"/></linearGradient></defs>
       <rect x="2" y="6" width="22" height="20" rx="3" fill="url(#g)"/>
@@ -196,91 +227,108 @@ tr:hover td{background:#fdf8f8}
   </div>
 </div>
 
+<!-- Clients modal -->
+<div class="modal-overlay" id="clients-modal" style="display:none" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>Clients Impacted</h2>
+      <button class="close-btn" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body" id="clients-modal-body"></div>
+  </div>
+</div>
+
 <!-- Dashboard -->
 <div id="dashboard">
-  <!-- Share info -->
-  <div class="share-banner">
-    <div>💡</div>
-    <div style="flex:1">
-      <strong>How to use this dashboard</strong>
-      <p>Upload the Looker CSV → issues auto-detect → mark items as you review → click <b>Download Audit CSV</b> to export a clean spreadsheet you can share or open in Google Sheets. Use <b>Save Progress</b> to bookmark your status/notes and <b>Load Progress</b> to restore them next session.</p>
+  <div class="dash-body">
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="sidebar-header"><h3>Food Partners</h3></div>
+      <div class="sidebar-search">
+        <span class="s-icon">🔍</span>
+        <input type="text" id="sidebar-search" placeholder="Find partner…" oninput="renderSidebar()">
+      </div>
+      <div class="sidebar-list" id="sidebar-list"></div>
     </div>
-  </div>
 
-  <!-- Summary -->
-  <div class="summary-row" id="summary-row"></div>
+    <!-- Main -->
+    <div class="main">
 
-  <!-- Progress bar -->
-  <div class="progress-bar-wrap">
-    <div class="label">
-      <span>Overall Completion</span>
-      <span id="progress-pct">0%</span>
-    </div>
-    <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
-  </div>
+      <!-- Banner -->
+      <div class="share-banner">
+        <div>💡</div>
+        <div style="flex:1">
+          <strong>How to use</strong>
+          <p>Select a food partner from the left → review issues → mark status → click <b>Download Audit CSV</b> to export for Google Sheets. Use <b>Save / Load Progress</b> to preserve your notes between sessions.</p>
+        </div>
+      </div>
 
-  <!-- Controls -->
-  <div class="controls">
-    <input type="text" id="search-input" placeholder="Search item, food partner, or detail…" oninput="renderTable()" style="min-width:260px">
-    <select id="filter-partner" onchange="setTab(this.value);syncPartnerDropdown()">
-      <option value="All">All Food Partners</option>
-    </select>
-    <select id="filter-type" onchange="renderTable()">
-      <option value="">All Issue Types</option>
-      <option value="Tag Conflict">Tag Conflict</option>
-      <option value="Incorrect Tag">Incorrect Tag</option>
-      <option value="Missing Tag">Missing Tag</option>
-      <option value="Typo">Typo</option>
-    </select>
-    <select id="filter-priority" onchange="renderTable()">
-      <option value="">All Priorities</option>
-      <option value="High">High</option>
-      <option value="Medium">Medium</option>
-      <option value="Low">Low</option>
-    </select>
-    <select id="filter-status" onchange="renderTable()">
-      <option value="">All Statuses</option>
-      <option value="Open">Open</option>
-      <option value="In Progress">In Progress</option>
-      <option value="Fixed">Fixed</option>
-      <option value="Won't Fix">Won't Fix</option>
-    </select>
-    <div class="spacer"></div>
-    <span id="result-count" style="font-size:12px;color:#888"></span>
-  </div>
+      <!-- Summary -->
+      <div class="summary-row" id="summary-row"></div>
 
-  <!-- Tabs -->
-  <div class="tabs-wrap">
-    <div class="tabs" id="tabs"></div>
-    <div class="tabs-scroll-hint" id="tabs-scroll-hint">›</div>
-  </div>
+      <!-- Progress -->
+      <div class="progress-bar-wrap">
+        <div class="label"><span>Overall Completion</span><span id="progress-pct">0%</span></div>
+        <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+      </div>
 
-  <!-- Table -->
-  <div class="table-wrap">
-    <table>
-      <thead>
-        <tr>
-          <th>#</th>
-          <th>Menu Item</th>
-          <th>Issue Type</th>
-          <th>Priority</th>
-          <th>Detail & Fix</th>
-          <th>Status</th>
-          <th>Assigned To</th>
-          <th>Notes</th>
-        </tr>
-      </thead>
-      <tbody id="issue-tbody"></tbody>
-    </table>
-    <div id="empty-state" class="empty-state" style="display:none">No issues match your filters.</div>
-  </div>
+      <!-- Controls -->
+      <div class="controls">
+        <input type="text" id="search-input" placeholder="Search item, partner, or detail…" oninput="renderTable()" style="min-width:230px">
+        <select id="filter-type" onchange="renderTable()">
+          <option value="">All Issue Types</option>
+          <option value="Tag Conflict">Tag Conflict</option>
+          <option value="Incorrect Tag">Incorrect Tag</option>
+          <option value="Missing Tag">Missing Tag</option>
+          <option value="Typo">Typo</option>
+        </select>
+        <select id="filter-priority" onchange="renderTable()">
+          <option value="">All Priorities</option>
+          <option value="High">High</option>
+          <option value="Medium">Medium</option>
+          <option value="Low">Low</option>
+        </select>
+        <select id="filter-status" onchange="renderTable()">
+          <option value="">All Statuses</option>
+          <option value="Open">Open</option>
+          <option value="In Progress">In Progress</option>
+          <option value="Fixed">Fixed</option>
+          <option value="Won't Fix">Won't Fix</option>
+        </select>
+        <div class="spacer"></div>
+        <span class="result-label" id="result-count"></span>
+      </div>
+
+      <!-- Table -->
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Menu Item</th>
+              <th>Issue Type</th>
+              <th>Priority</th>
+              <th>Detail & Fix</th>
+              <th>Status</th>
+              <th>Assigned To</th>
+              <th>Notes</th>
+            </tr>
+          </thead>
+          <tbody id="issue-tbody"></tbody>
+        </table>
+        <div id="empty-state" class="empty-state" style="display:none">No issues match your filters.</div>
+      </div>
+
+    </div><!-- /main -->
+  </div><!-- /dash-body -->
 </div>
 
 <script>
 // ── State ──────────────────────────────────────────────────────────────────
-let allIssues = [];   // enriched issues from audit
-let progress  = {};   // { issueKey: { status, assignee, notes } }
-let activeTab = 'All';
+let allIssues = [];
+let progress  = {};
+let activePartner = 'All';
 let csvFilename = '';
 
 // ── Audit rules ────────────────────────────────────────────────────────────
@@ -299,24 +347,13 @@ const MISSING_RULES = [
   { tag:'contains pork',     triggers:['pork','bacon','ham','prosciutto','pancetta','lard','sausage','chorizo','carnitas','guanciale'], exclude:['turkey sausage','chicken sausage','veggie sausage','plant-based sausage'] },
   { tag:'spicy',             triggers:['jalapeño','jalapeno','chipotle','serrano','sriracha','harissa','spicy','red pepper flake','hot sauce','chili oil','gochujang'], exclude:[] },
 ];
-
-const VEGAN_CONFLICTS     = ['meat','beef','chicken','pork','fish','shrimp','salmon','tuna','cheese','cream','butter','milk','egg','honey','dairy','lamb','turkey'];
+const VEGAN_CONFLICTS      = ['meat','beef','chicken','pork','fish','shrimp','salmon','tuna','cheese','cream','butter','milk','egg','honey','dairy','lamb','turkey'];
 const VEGETARIAN_CONFLICTS = ['beef','pork','chicken','shrimp','salmon','tuna','fish','lamb','turkey','bacon','ham','prosciutto','carnitas','chorizo','sausage'];
 
 function parseTags(rawTags) {
   if (!rawTags) return new Set();
-  try {
-    const parsed = JSON.parse(rawTags);
-    return new Set(parsed.map(t => t.toLowerCase().trim()));
-  } catch {
-    return new Set(rawTags.split(',').map(t => t.replace(/["\[\]]/g,'').toLowerCase().trim()).filter(Boolean));
-  }
-}
-
-function descContains(desc, name, triggers, exclude=[]) {
-  const hay = (desc + ' ' + name).toLowerCase();
-  if (exclude.some(ex => hay.includes(ex.toLowerCase()))) return false;
-  return triggers.some(tr => hay.includes(tr.toLowerCase()));
+  try { return new Set(JSON.parse(rawTags).map(t=>t.toLowerCase().trim())); }
+  catch { return new Set(rawTags.split(',').map(t=>t.replace(/["\[\]]/g,'').toLowerCase().trim()).filter(Boolean)); }
 }
 
 function auditRow(row) {
@@ -324,364 +361,289 @@ function auditRow(row) {
   const tags   = parseTags(row.tags);
   const desc   = row.description || '';
   const name   = row.item_name   || '';
-  const hay    = (desc + ' ' + name).toLowerCase();
+  const hay    = (desc+' '+name).toLowerCase();
 
-  // Tag conflicts
   const hasGlutenFree = tags.has('prepared without gluten');
-  const hasGluten     = tags.has('contains gluten') || tags.has('contains wheat & gluten') || tags.has('contains gluten & wheat');
-  if (hasGlutenFree && hasGluten) {
-    issues.push({ type:'Tag Conflict', priority:'High', detail:'Tagged "prepared without gluten" AND "contains gluten" — these contradict each other.', fix:'Remove whichever is incorrect — confirm with food partner.' });
+  const hasGluten     = [...tags].some(t=>t.includes('contains gluten')||t.includes('contains wheat'));
+  if (hasGlutenFree && hasGluten)
+    issues.push({type:'Tag Conflict',priority:'High',detail:'Tagged "prepared without gluten" AND "contains gluten" — contradiction.',fix:'Remove whichever is incorrect — confirm with food partner.'});
+
+  if (tags.has('vegan') && VEGAN_CONFLICTS.some(c=>hay.includes(c))) {
+    const found=VEGAN_CONFLICTS.filter(c=>hay.includes(c));
+    issues.push({type:'Tag Conflict',priority:'High',detail:`Tagged "vegan" but description contains: ${found.join(', ')}.`,fix:'Remove "vegan" tag or verify with food partner.'});
+  }
+  if (tags.has('vegetarian')&&!tags.has('vegan')&&VEGETARIAN_CONFLICTS.some(c=>hay.includes(c))) {
+    const found=VEGETARIAN_CONFLICTS.filter(c=>hay.includes(c));
+    issues.push({type:'Tag Conflict',priority:'High',detail:`Tagged "vegetarian" but description contains: ${found.join(', ')}.`,fix:'Remove "vegetarian" tag or verify with food partner.'});
   }
 
-  // Vegan conflicts
-  if (tags.has('vegan') && VEGAN_CONFLICTS.some(c => hay.includes(c))) {
-    const found = VEGAN_CONFLICTS.filter(c => hay.includes(c));
-    issues.push({ type:'Tag Conflict', priority:'High', detail:`Tagged "vegan" but description contains: ${found.join(', ')}.`, fix:'Remove "vegan" tag or verify with food partner.' });
-  }
-
-  // Vegetarian conflicts
-  if (tags.has('vegetarian') && !tags.has('vegan') && VEGETARIAN_CONFLICTS.some(c => hay.includes(c))) {
-    const found = VEGETARIAN_CONFLICTS.filter(c => hay.includes(c));
-    issues.push({ type:'Tag Conflict', priority:'High', detail:`Tagged "vegetarian" but description contains: ${found.join(', ')}.`, fix:'Remove "vegetarian" tag or verify with food partner.' });
-  }
-
-  // Missing tags — only check if description is non-empty (or use name-only for key items)
-  const checkable = desc.length > 0;
-  if (checkable || name.length > 0) {
+  if (desc.length>0||name.length>0) {
     for (const rule of MISSING_RULES) {
-      // Skip gluten/wheat if already has prepared without gluten
-      if ((rule.tag === 'contains wheat' || rule.tag === 'contains gluten') && hasGlutenFree) continue;
-      // Check if any existing tag covers this (partial match)
-      const alreadyTagged = [...tags].some(t => t.includes(rule.tag) || (rule.tag.includes('&') && t.includes(rule.tag.split('&')[0].trim())));
-      // also check for combined tags like "contains wheat & dairy"
-      const combinedCovered = [...tags].some(t => t.includes(rule.tag.replace('contains ','').split(' ')[0]));
-      if (alreadyTagged || combinedCovered) continue;
-      if (descContains(desc, checkable ? '' : name, rule.triggers, rule.exclude)) {
-        const found = rule.triggers.filter(tr => hay.includes(tr.toLowerCase()));
-        const priority = ['contains dairy','contains eggs','contains shellfish','contains fish','contains peanuts','contains treenuts','contains wheat'].includes(rule.tag) ? 'High' : 'Medium';
-        issues.push({ type:'Missing Tag', priority, detail:`Missing "${rule.tag}" — found in description: "${found.slice(0,3).join('", "')}"`, fix:`Add "${rule.tag}"` });
+      if ((rule.tag==='contains wheat'||rule.tag==='contains gluten')&&hasGlutenFree) continue;
+      const covered=[...tags].some(t=>t.includes(rule.tag.replace('contains ','').split(' ')[0]));
+      if (covered) continue;
+      const hayCheck=(desc+' '+(desc.length>0?'':name)).toLowerCase();
+      const exMatch=rule.exclude.some(ex=>hay.includes(ex.toLowerCase()));
+      if (exMatch) continue;
+      const found=rule.triggers.filter(tr=>hay.includes(tr.toLowerCase()));
+      if (found.length>0) {
+        const priority=['contains dairy','contains eggs','contains shellfish','contains fish','contains peanuts','contains treenuts','contains wheat'].includes(rule.tag)?'High':'Medium';
+        issues.push({type:'Missing Tag',priority,detail:`Missing "${rule.tag}" — found: "${found.slice(0,3).join('", "')}"`,fix:`Add "${rule.tag}"`});
       }
     }
   }
-
   return issues;
-}
-
-function checkTagCoverage(tagSet, tag) {
-  for (const t of tagSet) {
-    if (t === tag) return true;
-    if (t.includes(tag.replace('contains ',''))) return true;
-  }
-  return false;
 }
 
 // ── CSV Parsing ────────────────────────────────────────────────────────────
 function parseCSV(text) {
-  const lines = [];
-  let cur = '', inQ = false;
-  for (let i = 0; i < text.length; i++) {
-    const ch = text[i];
-    if (ch === '"') { inQ = !inQ; cur += ch; }
-    else if (ch === '\n' && !inQ) { lines.push(cur); cur = ''; }
-    else { cur += ch; }
+  const lines=[]; let cur='',inQ=false;
+  for(let i=0;i<text.length;i++){
+    const ch=text[i];
+    if(ch==='"'){inQ=!inQ;cur+=ch;}
+    else if(ch==='\n'&&!inQ){lines.push(cur);cur='';}
+    else{cur+=ch;}
   }
-  if (cur) lines.push(cur);
-
-  const rows = lines.map(line => {
-    const cols = []; let field = '', q = false;
-    for (let i = 0; i < line.length; i++) {
-      const ch = line[i];
-      if (ch === '"' && !q) { q = true; }
-      else if (ch === '"' && q && line[i+1] === '"') { field += '"'; i++; }
-      else if (ch === '"' && q) { q = false; }
-      else if (ch === ',' && !q) { cols.push(field.trim()); field = ''; }
-      else { field += ch; }
+  if(cur)lines.push(cur);
+  return lines.map(line=>{
+    const cols=[];let field='',q=false;
+    for(let i=0;i<line.length;i++){
+      const ch=line[i];
+      if(ch==='"'&&!q){q=true;}
+      else if(ch==='"'&&q&&line[i+1]==='"'){field+='"';i++;}
+      else if(ch==='"'&&q){q=false;}
+      else if(ch===','&&!q){cols.push(field.trim());field='';}
+      else{field+=ch;}
     }
-    cols.push(field.trim());
-    return cols;
+    cols.push(field.trim());return cols;
   });
-
-  return rows;
 }
 
 function processCSV(text) {
-  const rows = parseCSV(text);
-  if (rows.length < 2) return [];
-
-  const data = [];
-  for (let i = 1; i < rows.length; i++) {
-    const r = rows[i];
-    if (!r[0] || !r[0].trim().match(/^\d+$/)) continue;
-    data.push({
-      row_num:      parseInt(r[0]),
-      dropoff_date: r[1] || '',
-      market:       r[2] || '',
-      client:       r[3] || '',
-      food_partner: r[4] || 'Unknown',
-      item_type:    r[5] || '',
-      item_name:    r[6] || '',
-      description:  r[7] || '',
-      tags:         r[8] || '',
-    });
+  const rows=parseCSV(text);
+  if(rows.length<2)return[];
+  const data=[];
+  for(let i=1;i<rows.length;i++){
+    const r=rows[i];
+    if(!r[0]||!r[0].trim().match(/^\d+$/))continue;
+    data.push({row_num:parseInt(r[0]),dropoff_date:r[1]||'',market:r[2]||'',client:r[3]||'',food_partner:r[4]||'Unknown',item_type:r[5]||'',item_name:r[6]||'',description:r[7]||'',tags:r[8]||''});
   }
-
-  const issues = [];
-  for (const row of data) {
-    const rowIssues = auditRow(row);
-    for (const issue of rowIssues) {
-      issues.push({ ...row, ...issue, key: `${row.row_num}-${issue.type}-${issue.detail.slice(0,30)}` });
-    }
+  const issues=[];
+  for(const row of data){
+    for(const issue of auditRow(row))
+      issues.push({...row,...issue,key:`${row.row_num}-${issue.type}-${issue.detail.slice(0,30)}`});
   }
   return issues;
 }
 
 // ── File handling ──────────────────────────────────────────────────────────
 function handleFile(file) {
-  if (!file) return;
-  csvFilename = file.name;
-  const reader = new FileReader();
-  reader.onload = e => {
-    allIssues = processCSV(e.target.result);
-    loadProgressFromStorage();
-    showDashboard();
-  };
+  if(!file)return;
+  csvFilename=file.name;
+  const reader=new FileReader();
+  reader.onload=e=>{allIssues=processCSV(e.target.result);loadProgressFromStorage();showDashboard();};
   reader.readAsText(file);
 }
-
-function onDragOver(e) { e.preventDefault(); document.getElementById('drop-zone').classList.add('drag-over'); }
-function onDragLeave()  { document.getElementById('drop-zone').classList.remove('drag-over'); }
-function onDrop(e)      { e.preventDefault(); onDragLeave(); handleFile(e.dataTransfer.files[0]); }
+function onDragOver(e){e.preventDefault();document.getElementById('drop-zone').classList.add('drag-over');}
+function onDragLeave(){document.getElementById('drop-zone').classList.remove('drag-over');}
+function onDrop(e){e.preventDefault();onDragLeave();handleFile(e.dataTransfer.files[0]);}
 
 // ── Dashboard ──────────────────────────────────────────────────────────────
 function showDashboard() {
-  document.getElementById('upload-screen').style.display = 'none';
-  document.getElementById('dashboard').style.display = 'block';
-  document.getElementById('topbar-actions').style.display = 'flex';
-  document.getElementById('meta-label').textContent = csvFilename ? `  ·  ${csvFilename}` : '';
+  document.getElementById('upload-screen').style.display='none';
+  document.getElementById('dashboard').style.display='block';
+  document.getElementById('topbar-actions').style.display='flex';
+  document.getElementById('meta-label').textContent=csvFilename?`  ·  ${csvFilename}`:'';
   renderSummary();
-  renderTabs();
+  renderSidebar();
   renderTable();
-  setTimeout(initTabsScroll, 50);
 }
 
 function resetUpload() {
-  document.getElementById('upload-screen').style.display = 'flex';
-  document.getElementById('dashboard').style.display = 'none';
-  document.getElementById('topbar-actions').style.display = 'none';
-  document.getElementById('meta-label').textContent = '';
-  allIssues = []; progress = {}; activeTab = 'All';
-  document.getElementById('csv-input').value = '';
+  document.getElementById('upload-screen').style.display='flex';
+  document.getElementById('dashboard').style.display='none';
+  document.getElementById('topbar-actions').style.display='none';
+  document.getElementById('meta-label').textContent='';
+  allIssues=[];progress={};activePartner='All';
+  document.getElementById('csv-input').value='';
 }
 
 // ── Summary cards ──────────────────────────────────────────────────────────
 function renderSummary() {
   const total     = allIssues.length;
+  const partners  = new Set(allIssues.map(i=>i.food_partner)).size;
+  const clients   = new Set(allIssues.map(i=>i.client)).size;
   const conflict  = allIssues.filter(i=>i.type==='Tag Conflict').length;
-  const incorrect = allIssues.filter(i=>i.type==='Incorrect Tag').length;
   const missing   = allIssues.filter(i=>i.type==='Missing Tag').length;
   const typo      = allIssues.filter(i=>i.type==='Typo').length;
-  const fixed     = allIssues.filter(i=>getStatus(i.key)==='Fixed' || getStatus(i.key)==="Won't Fix").length;
-  const pct       = total ? Math.round(fixed/total*100) : 0;
+  const fixed     = allIssues.filter(i=>getStatus(i.key)==='Fixed'||getStatus(i.key)==="Won't Fix").length;
+  const pct       = total?Math.round(fixed/total*100):0;
 
-  document.getElementById('summary-row').innerHTML = `
-    <div class="stat-card conflict"><div class="n">${conflict}</div><div class="l">Tag Conflicts</div></div>
-    <div class="stat-card incorrect"><div class="n">${incorrect}</div><div class="l">Incorrect Tags</div></div>
-    <div class="stat-card missing"><div class="n">${missing}</div><div class="l">Missing Tags</div></div>
+  document.getElementById('summary-row').innerHTML=`
+    <div class="stat-card partners"><div class="n">${partners}</div><div class="l">Food Partners<br>with Issues</div></div>
+    <div class="stat-card clients clickable" onclick="openClientsModal()">
+      <div class="n">${clients}</div>
+      <div class="l">Clients<br>Impacted</div>
+      <div class="hint-label">▸ View list</div>
+    </div>
+    <div class="stat-card conflict"><div class="n">${conflict}</div><div class="l">Tag<br>Conflicts</div></div>
+    <div class="stat-card missing"><div class="n">${missing}</div><div class="l">Missing<br>Tags</div></div>
     <div class="stat-card typo"><div class="n">${typo}</div><div class="l">Typos</div></div>
     <div class="stat-card done"><div class="n">${fixed}/${total}</div><div class="l">Resolved</div></div>
   `;
-  document.getElementById('progress-pct').textContent = pct + '%';
-  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('progress-pct').textContent=pct+'%';
+  document.getElementById('progress-fill').style.width=pct+'%';
 }
 
-// ── Tabs ───────────────────────────────────────────────────────────────────
-function renderTabs() {
+// ── Sidebar ────────────────────────────────────────────────────────────────
+function renderSidebar() {
+  const q = (document.getElementById('sidebar-search').value||'').toLowerCase();
   const partners = ['All', ...new Set(allIssues.map(i=>i.food_partner).sort())];
-  document.getElementById('tabs').innerHTML = partners.map(p => {
-    const count = p === 'All' ? allIssues.length : allIssues.filter(i=>i.food_partner===p).length;
-    return `<div class="tab${activeTab===p?' active':''}" onclick="setTab('${p.replace(/'/g,"\\'")}');syncPartnerDropdown()">
-      ${p} <span class="count">${count}</span>
+  const filtered = partners.filter(p => p==='All' || p.toLowerCase().includes(q));
+
+  document.getElementById('sidebar-list').innerHTML = filtered.map(p => {
+    const count = p==='All' ? allIssues.length : allIssues.filter(i=>i.food_partner===p).length;
+    const active = activePartner===p;
+    return `<div class="sidebar-item${p==='All'?' all-item':''}${active?' active':''}" onclick="setPartner('${p.replace(/'/g,"\\'")}')">
+      <span class="si-name">${p==='All'?'All Partners':esc(p)}</span>
+      <span class="si-count">${count}</span>
     </div>`;
   }).join('');
-  // Populate dropdown
-  const dd = document.getElementById('filter-partner');
-  const current = dd.value;
-  dd.innerHTML = ['All', ...partners.slice(1)].map(p =>
-    `<option value="${p}"${p===activeTab?' selected':''}>${p === 'All' ? 'All Food Partners' : p}</option>`
-  ).join('');
 }
 
-function setTab(p) { activeTab = p; renderTabs(); renderTable(); }
-function syncPartnerDropdown() { document.getElementById('filter-partner').value = activeTab; }
-
-function initTabsScroll() {
-  const tabs = document.querySelector('.tabs');
-  const hint = document.getElementById('tabs-scroll-hint');
-  if (!tabs || !hint) return;
-  const update = () => {
-    const atEnd = tabs.scrollLeft + tabs.clientWidth >= tabs.scrollWidth - 4;
-    hint.style.display = atEnd ? 'none' : 'block';
-  };
-  tabs.addEventListener('scroll', update);
-  update();
-}
+function setPartner(p) { activePartner=p; renderSidebar(); renderTable(); }
 
 // ── Table ──────────────────────────────────────────────────────────────────
-const TYPE_BADGE  = { 'Tag Conflict':'conflict','Incorrect Tag':'incorrect','Missing Tag':'missing','Typo':'typo' };
-const PRIO_BADGE  = { 'High':'high','Medium':'medium','Low':'low' };
-const STATUS_CLS  = { 'Open':'open','In Progress':'inprogress','Fixed':'fixed',"Won't Fix":'wontfix' };
+const TYPE_BADGE = {'Tag Conflict':'conflict','Incorrect Tag':'incorrect','Missing Tag':'missing','Typo':'typo'};
+const PRIO_BADGE = {'High':'high','Medium':'medium','Low':'low'};
+const STATUS_CLS = {'Open':'open','In Progress':'inprogress','Fixed':'fixed',"Won't Fix":'wontfix'};
 
 function getStatus(key)   { return (progress[key]||{}).status   || 'Open'; }
 function getAssignee(key) { return (progress[key]||{}).assignee || ''; }
 function getNotes(key)    { return (progress[key]||{}).notes    || ''; }
 
 function saveProgress(key, field, val) {
-  if (!progress[key]) progress[key] = { status:'Open', assignee:'', notes:'' };
-  progress[key][field] = val;
+  if(!progress[key])progress[key]={status:'Open',assignee:'',notes:''};
+  progress[key][field]=val;
   saveProgressToStorage();
   renderSummary();
 }
 
 function renderTable() {
-  const search   = document.getElementById('search-input').value.toLowerCase();
-  const fType    = document.getElementById('filter-type').value;
-  const fPrio    = document.getElementById('filter-priority').value;
-  const fStatus  = document.getElementById('filter-status').value;
+  const search  = document.getElementById('search-input').value.toLowerCase();
+  const fType   = document.getElementById('filter-type').value;
+  const fPrio   = document.getElementById('filter-priority').value;
+  const fStatus = document.getElementById('filter-status').value;
 
   let filtered = allIssues.filter(i => {
-    if (activeTab !== 'All' && i.food_partner !== activeTab) return false;
-    if (fType   && i.type     !== fType)   return false;
-    if (fPrio   && i.priority !== fPrio)   return false;
-    if (fStatus && getStatus(i.key) !== fStatus) return false;
-    if (search  && !`${i.item_name} ${i.detail} ${i.food_partner} ${i.description}`.toLowerCase().includes(search)) return false;
+    if(activePartner!=='All'&&i.food_partner!==activePartner)return false;
+    if(fType   &&i.type!==fType)return false;
+    if(fPrio   &&i.priority!==fPrio)return false;
+    if(fStatus &&getStatus(i.key)!==fStatus)return false;
+    if(search  &&!`${i.item_name} ${i.detail} ${i.food_partner} ${i.description} ${i.client}`.toLowerCase().includes(search))return false;
     return true;
   });
 
-  // Sort: High first, then by type severity, then row_num
-  const typeOrder = {'Tag Conflict':0,'Incorrect Tag':1,'Missing Tag':2,'Typo':3};
-  const prioOrder = {'High':0,'Medium':1,'Low':2};
-  filtered.sort((a,b) => prioOrder[a.priority]-prioOrder[b.priority] || typeOrder[a.type]-typeOrder[b.type] || a.row_num-b.row_num);
+  const typeOrder={'Tag Conflict':0,'Incorrect Tag':1,'Missing Tag':2,'Typo':3};
+  const prioOrder={'High':0,'Medium':1,'Low':2};
+  filtered.sort((a,b)=>prioOrder[a.priority]-prioOrder[b.priority]||typeOrder[a.type]-typeOrder[b.type]||a.row_num-b.row_num);
 
-  document.getElementById('result-count').textContent = `${filtered.length} issue${filtered.length===1?'':'s'}`;
+  document.getElementById('result-count').textContent=`${filtered.length} issue${filtered.length===1?'':'s'}`;
+  const tbody=document.getElementById('issue-tbody');
+  const empty=document.getElementById('empty-state');
 
-  const tbody = document.getElementById('issue-tbody');
-  const empty = document.getElementById('empty-state');
+  if(filtered.length===0){tbody.innerHTML='';empty.style.display='block';return;}
+  empty.style.display='none';
 
-  if (filtered.length === 0) {
-    tbody.innerHTML = '';
-    empty.style.display = 'block';
-    return;
-  }
-  empty.style.display = 'none';
-
-  tbody.innerHTML = filtered.map(issue => {
-    const key     = issue.key;
-    const status  = getStatus(key);
-    const statusCls = STATUS_CLS[status] || 'open';
+  tbody.innerHTML=filtered.map(issue=>{
+    const key=issue.key;
+    const status=getStatus(key);
+    const sc=STATUS_CLS[status]||'open';
     return `<tr>
       <td><span class="row-num">${issue.row_num}</span></td>
       <td>
         <div class="item-partner">${esc(issue.food_partner)}</div>
         <div class="item-name">${esc(issue.item_name)}</div>
-        ${issue.description ? `<div class="item-desc">${esc(issue.description.slice(0,90))}${issue.description.length>90?'…':''}</div>` : ''}
+        ${issue.description?`<div class="item-desc">${esc(issue.description.slice(0,80))}${issue.description.length>80?'…':''}</div>`:''}
       </td>
       <td><span class="badge badge-${TYPE_BADGE[issue.type]}">${issue.type}</span></td>
       <td><span class="badge badge-${PRIO_BADGE[issue.priority]}">${issue.priority}</span></td>
       <td>
         <div class="detail-text">${esc(issue.detail)}</div>
-        <div class="fix-text" style="margin-top:5px">→ ${esc(issue.fix)}</div>
+        <div class="fix-text">→ ${esc(issue.fix)}</div>
       </td>
       <td>
-        <select class="status-sel status-${statusCls}" onchange="saveProgress('${esc(key)}','status',this.value);this.className='status-sel status-'+(${JSON.stringify(STATUS_CLS)}[this.value]||'open')">
+        <select class="status-sel status-${sc}" onchange="saveProgress('${esc(key)}','status',this.value);this.className='status-sel status-'+(${JSON.stringify(STATUS_CLS)}[this.value]||'open')">
           ${['Open','In Progress','Fixed',"Won't Fix"].map(s=>`<option${status===s?' selected':''}>${s}</option>`).join('')}
         </select>
       </td>
-      <td><input class="assignee-input" placeholder="Name…" value="${esc(getAssignee(key))}" onchange="saveProgress('${esc(key)}','assignee',this.value)" /></td>
+      <td><input class="assignee-input" placeholder="Name…" value="${esc(getAssignee(key))}" onchange="saveProgress('${esc(key)}','assignee',this.value)"/></td>
       <td><textarea class="notes-input" placeholder="Notes…" onchange="saveProgress('${esc(key)}','notes',this.value)">${esc(getNotes(key))}</textarea></td>
     </tr>`;
   }).join('');
 }
 
-function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
+
+// ── Clients modal ──────────────────────────────────────────────────────────
+function openClientsModal() {
+  // Build map: client → issue count
+  const map = {};
+  for (const i of allIssues) {
+    if (!i.client) continue;
+    map[i.client] = (map[i.client] || 0) + 1;
+  }
+  const sorted = Object.entries(map).sort((a,b) => b[1]-a[1]);
+
+  document.getElementById('clients-modal-body').innerHTML = sorted.length
+    ? sorted.map(([name, count]) => `
+        <div class="client-row">
+          <span class="client-name">${esc(name)}</span>
+          <span class="client-badge">${count} issue${count===1?'':'s'}</span>
+        </div>`).join('')
+    : '<p style="color:#888;font-size:13px">No client data found.</p>';
+
+  document.getElementById('clients-modal').style.display = 'flex';
+}
+
+function closeModal() {
+  document.getElementById('clients-modal').style.display = 'none';
+}
 
 // ── Persistence ────────────────────────────────────────────────────────────
-const STORAGE_KEY = 'hungry_menu_audit_progress';
-
-function saveProgressToStorage() {
-  try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ csvFilename, progress, savedAt: new Date().toISOString() })); } catch {}
-}
-
-function loadProgressFromStorage() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return;
-    const data = JSON.parse(raw);
-    if (data.progress) progress = data.progress;
-  } catch {}
-}
+const STORAGE_KEY='hungry_menu_audit_progress';
+function saveProgressToStorage(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify({csvFilename,progress,savedAt:new Date().toISOString()}));}catch{}}
+function loadProgressFromStorage(){try{const raw=localStorage.getItem(STORAGE_KEY);if(!raw)return;const d=JSON.parse(raw);if(d.progress)progress=d.progress;}catch{}}
 
 function downloadCSV() {
-  const headers = ['Row #','Food Partner','Client','Menu Item Name','Issue Type','Priority','Issue Detail','Recommended Fix','Current Tags','Description','Status','Assigned To','Notes'];
-  const rows = allIssues.map(issue => [
-    issue.row_num,
-    issue.food_partner,
-    issue.client,
-    issue.item_name,
-    issue.type,
-    issue.priority,
-    issue.detail,
-    issue.fix,
-    issue.current_tags,
-    issue.description,
-    getStatus(issue.key),
-    getAssignee(issue.key),
-    getNotes(issue.key),
-  ].map(v => `"${String(v||'').replace(/"/g,'""')}"`));
-
-  const csv = [headers.map(h=>`"${h}"`).join(','), ...rows.map(r=>r.join(','))].join('\r\n');
-  const blob = new Blob([csv], { type:'text/csv' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = `menu-audit-${new Date().toISOString().slice(0,10)}.csv`;
+  const headers=['Row #','Food Partner','Client','Menu Item Name','Issue Type','Priority','Issue Detail','Recommended Fix','Current Tags','Description','Status','Assigned To','Notes'];
+  const rows=allIssues.map(i=>[i.row_num,i.food_partner,i.client,i.item_name,i.type,i.priority,i.detail,i.fix,i.current_tags,i.description,getStatus(i.key),getAssignee(i.key),getNotes(i.key)].map(v=>`"${String(v||'').replace(/"/g,'""')}"`));
+  const csv=[headers.map(h=>`"${h}"`).join(','),...rows.map(r=>r.join(','))].join('\r\n');
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
+  a.download=`menu-audit-${new Date().toISOString().slice(0,10)}.csv`;
   a.click();
 }
 
 function exportProgress() {
-  const data = { csvFilename, exportedAt: new Date().toISOString(), progress };
-  const blob = new Blob([JSON.stringify(data, null, 2)], { type:'application/json' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = `menu-audit-progress-${new Date().toISOString().slice(0,10)}.json`;
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([JSON.stringify({csvFilename,exportedAt:new Date().toISOString(),progress},null,2)],{type:'application/json'}));
+  a.download=`menu-audit-progress-${new Date().toISOString().slice(0,10)}.json`;
   a.click();
 }
 
 function importProgress(event) {
-  const file = event.target.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = e => {
-    try {
-      const data = JSON.parse(e.target.result);
-      if (data.progress) { progress = data.progress; saveProgressToStorage(); renderSummary(); renderTable(); alert('Progress imported!'); }
-      else { alert('Invalid progress file.'); }
-    } catch { alert('Could not read file.'); }
-  };
-  reader.readAsText(file);
-  event.target.value = '';
+  const file=event.target.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{try{const d=JSON.parse(e.target.result);if(d.progress){progress=d.progress;saveProgressToStorage();renderSummary();renderTable();alert('Progress loaded!');}}catch{alert('Could not read file.');}};
+  reader.readAsText(file);event.target.value='';
 }
 
 function importProgressUploadScreen(event) {
-  const file = event.target.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = e => {
-    try {
-      const data = JSON.parse(e.target.result);
-      if (data.progress) { progress = data.progress; alert('Progress loaded! Now upload your CSV to see the dashboard.'); }
-    } catch { alert('Could not read file.'); }
-  };
-  reader.readAsText(file);
-  event.target.value = '';
+  const file=event.target.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{try{const d=JSON.parse(e.target.result);if(d.progress){progress=d.progress;alert('Progress loaded! Now upload your CSV.');}}catch{alert('Could not read file.');}};
+  reader.readAsText(file);event.target.value='';
 }
 </script>
 </body>
