@@ -152,9 +152,10 @@ tr:hover td{background:#fdf8f8}
     <span class="meta" id="meta-label"></span>
   </div>
   <div class="topbar-right" id="topbar-actions" style="display:none">
-    <button class="btn btn-ghost btn-sm" onclick="exportProgress()">⬇ Export Progress</button>
+    <button class="btn btn-primary btn-sm" onclick="downloadCSV()">⬇ Download Audit CSV</button>
+    <button class="btn btn-ghost btn-sm" onclick="exportProgress()">⬇ Save Progress</button>
     <label class="btn btn-ghost btn-sm" style="cursor:pointer">
-      ⬆ Import Progress
+      ⬆ Load Progress
       <input type="file" accept=".json" style="display:none" onchange="importProgress(event)">
     </label>
     <button class="btn btn-ghost btn-sm" onclick="resetUpload()">⟳ New CSV</button>
@@ -196,9 +197,9 @@ tr:hover td{background:#fdf8f8}
   <!-- Share info -->
   <div class="share-banner">
     <div>💡</div>
-    <div>
-      <strong>Sharing & Syncing Progress</strong>
-      <p>Use <b>Export Progress</b> to download your current state as a JSON file. Share it with your team via Slack or email. They click <b>Import Progress</b> to load it. Changes are saved automatically as you work.</p>
+    <div style="flex:1">
+      <strong>How to use this dashboard</strong>
+      <p>Upload the Looker CSV → issues auto-detect → mark items as you review → click <b>Download Audit CSV</b> to export a clean spreadsheet you can share or open in Google Sheets. Use <b>Save Progress</b> to bookmark your status/notes and <b>Load Progress</b> to restore them next session.</p>
     </div>
   </div>
 
@@ -586,6 +587,32 @@ function loadProgressFromStorage() {
     const data = JSON.parse(raw);
     if (data.progress) progress = data.progress;
   } catch {}
+}
+
+function downloadCSV() {
+  const headers = ['Row #','Food Partner','Client','Menu Item Name','Issue Type','Priority','Issue Detail','Recommended Fix','Current Tags','Description','Status','Assigned To','Notes'];
+  const rows = allIssues.map(issue => [
+    issue.row_num,
+    issue.food_partner,
+    issue.client,
+    issue.item_name,
+    issue.type,
+    issue.priority,
+    issue.detail,
+    issue.fix,
+    issue.current_tags,
+    issue.description,
+    getStatus(issue.key),
+    getAssignee(issue.key),
+    getNotes(issue.key),
+  ].map(v => `"${String(v||'').replace(/"/g,'""')}"`));
+
+  const csv = [headers.map(h=>`"${h}"`).join(','), ...rows.map(r=>r.join(','))].join('\r\n');
+  const blob = new Blob([csv], { type:'text/csv' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `menu-audit-${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
 }
 
 function exportProgress() {
