@@ -134,6 +134,10 @@ tr:hover td{background:#fdf8f8}
 .fix-text{font-size:11px;color:#059669;font-weight:600;line-height:1.4;margin-top:4px}
 .detail-text{font-size:11px;color:#555;line-height:1.4}
 .empty-state{text-align:center;padding:48px;color:#888;font-size:13px}
+.issue-row{padding:5px 0;border-bottom:1px dashed #ebebeb;display:flex;flex-direction:column;gap:2px}
+.issue-row:last-child{border-bottom:none;padding-bottom:0}
+.issue-row:first-child{padding-top:0}
+.issue-badges{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:2px}
 
 /* clickable card */
 .stat-card.clickable{cursor:pointer;transition:.15s}
@@ -160,6 +164,23 @@ tr:hover td{background:#fdf8f8}
 .share-banner p{color:rgba(255,255,255,.6);font-size:11px;margin-top:2px;line-height:1.5}
 
 .result-label{font-size:11px;color:#aaa;font-weight:500}
+.date-range-badge{font-size:11px;font-weight:600;background:rgba(255,255,255,.12);color:rgba(255,255,255,.85);border-radius:20px;padding:3px 10px;white-space:nowrap;margin-left:4px}
+
+/* ── Tabs ── */
+.tab-bar{display:flex;gap:4px;margin-bottom:18px;border-bottom:2px solid #e4e8ea}
+.tab-btn{padding:8px 18px;font-size:12px;font-weight:600;font-family:var(--font);border:none;background:none;cursor:pointer;color:#aaa;border-bottom:2px solid transparent;margin-bottom:-2px;transition:.15s}
+.tab-btn:hover{color:var(--blue)}
+.tab-btn.active{color:var(--orange);border-bottom-color:var(--orange)}
+.tab-panel{display:none}.tab-panel.active{display:block}
+
+/* ── Issue guide ── */
+.guide-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+.guide-card{background:#fff;border-radius:12px;padding:20px 22px;box-shadow:0 1px 4px rgba(61,75,83,.07)}
+.guide-card h3{font-size:13px;font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.guide-card ul{list-style:none;display:flex;flex-direction:column;gap:6px}
+.guide-card li{font-size:12px;color:#555;line-height:1.5;padding-left:14px;position:relative}
+.guide-card li::before{content:"•";position:absolute;left:0;color:#bbb}
+.guide-card .ex{font-size:11px;color:#999;margin-top:6px;padding:8px 10px;background:var(--grey);border-radius:6px;line-height:1.5}
 
 @media(max-width:900px){
   .sidebar{display:none}
@@ -185,6 +206,7 @@ tr:hover td{background:#fdf8f8}
     <div class="topbar-divider"></div>
     <h1>Menu Audit</h1>
     <span class="meta" id="meta-label"></span>
+    <span class="date-range-badge" id="date-range-label" style="display:none"></span>
   </div>
   <div class="topbar-right" id="topbar-actions" style="display:none">
     <button class="btn btn-primary btn-sm" onclick="downloadCSV()">⬇ Download Audit CSV</button>
@@ -273,6 +295,15 @@ tr:hover td{background:#fdf8f8}
         <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
       </div>
 
+      <!-- Tabs -->
+      <div class="tab-bar">
+        <button class="tab-btn active" onclick="switchTab('issues',this)">Issues</button>
+        <button class="tab-btn" onclick="switchTab('guide',this)">Issue Type Guide</button>
+      </div>
+
+      <!-- Tab: Issues -->
+      <div class="tab-panel active" id="tab-issues">
+
       <!-- Controls -->
       <div class="controls">
         <input type="text" id="search-input" placeholder="Search item, partner, or detail…" oninput="renderTable()" style="min-width:230px">
@@ -307,9 +338,7 @@ tr:hover td{background:#fdf8f8}
             <tr>
               <th>#</th>
               <th>Menu Item</th>
-              <th>Issue Type</th>
-              <th>Priority</th>
-              <th>Detail & Fix</th>
+              <th>Issues</th>
               <th>Status</th>
               <th>Assigned To</th>
               <th>Notes</th>
@@ -319,6 +348,47 @@ tr:hover td{background:#fdf8f8}
         </table>
         <div id="empty-state" class="empty-state" style="display:none">No issues match your filters.</div>
       </div>
+
+      </div><!-- /tab-issues -->
+
+      <!-- Tab: Issue Type Guide -->
+      <div class="tab-panel" id="tab-guide">
+        <div class="guide-grid">
+
+          <div class="guide-card">
+            <h3><span class="badge badge-missing">Missing Tag</span></h3>
+            <ul>
+              <li>A required dietary tag is absent from the menu item but should be applied based on ingredients in the name or description.</li>
+              <li>The audit checks for <strong>13 allergen/dietary categories</strong>: dairy, eggs, wheat, gluten, allium, soy, sesame, shellfish, fish, peanuts, tree nuts, pork, and spicy.</li>
+              <li>Priority is <strong>High</strong> for the 8 major allergens (dairy, eggs, shellfish, fish, peanuts, tree nuts, wheat, gluten) and <strong>Medium</strong> for others.</li>
+            </ul>
+            <div class="ex"><strong>Example:</strong> Item description says "topped with parmesan" but "contains dairy" tag is missing → flag as Missing Tag.</div>
+          </div>
+
+          <div class="guide-card">
+            <h3><span class="badge badge-conflict">Tag Conflict</span></h3>
+            <ul>
+              <li>Two existing tags contradict each other, or an existing tag directly contradicts what's in the description.</li>
+              <li><strong>Gluten conflict:</strong> tagged both "prepared without gluten" and "contains gluten/wheat" at the same time.</li>
+              <li><strong>Vegan conflict:</strong> tagged "vegan" but description contains meat, dairy, eggs, honey, or other animal products.</li>
+              <li><strong>Vegetarian conflict:</strong> tagged "vegetarian" (not vegan) but description contains meat, poultry, or seafood.</li>
+              <li>All Tag Conflicts are flagged at <strong>High</strong> priority.</li>
+            </ul>
+            <div class="ex"><strong>Example:</strong> Item is tagged "vegan" but description says "grilled chicken breast" → Tag Conflict.</div>
+          </div>
+
+          <div class="guide-card">
+            <h3><span class="badge badge-typo">Typo</span></h3>
+            <ul>
+              <li>Spelling errors, formatting inconsistencies, or obvious mistakes in the menu item name or description.</li>
+              <li>Typos are flagged at <strong>Low</strong> priority by default unless they could cause a misunderstanding for clients.</li>
+              <li>Currently detected through manual review — this audit does not auto-detect typos from the CSV.</li>
+            </ul>
+            <div class="ex"><strong>Example:</strong> "Grilled Chiken Breast" instead of "Grilled Chicken Breast".</div>
+          </div>
+
+        </div>
+      </div><!-- /tab-guide -->
 
     </div><!-- /main -->
   </div><!-- /dash-body -->
@@ -422,11 +492,24 @@ function parseCSV(text) {
 function processCSV(text) {
   const rows=parseCSV(text);
   if(rows.length<2)return[];
+  // Detect columns from header row so order changes don't break mapping
+  const hdr=rows[0].map(h=>h.toLowerCase().trim());
+  const col=(...needles)=>{for(const n of needles){const i=hdr.findIndex(h=>h.includes(n));if(i>=0)return i;}return -1;};
+  const iNum    = col('row',-1)    >= 0 ? col('row')    : 0;
+  const iDate   = col('dropoff')   >= 0 ? col('dropoff'): 1;
+  const iMarket = col('market')    >= 0 ? col('market') : 2;
+  const iClient = col('client')    >= 0 ? col('client') : 3;
+  const iPartner= col('food partner')>=0? col('food partner'):4;
+  const iType   = col('item type') >= 0 ? col('item type'):5;
+  const iName   = col('menu item name')>=0? col('menu item name'): col('item name')>=0? col('item name'):6;
+  const iDesc   = col('description')>=0 ? col('description'):7;
+  const iTags   = col('dietary tag','tag')>=0? col('dietary tag','tag'):8;
   const data=[];
   for(let i=1;i<rows.length;i++){
     const r=rows[i];
-    if(!r[0]||!r[0].trim().match(/^\d+$/))continue;
-    data.push({row_num:parseInt(r[0]),dropoff_date:r[1]||'',market:r[2]||'',client:r[3]||'',food_partner:r[4]||'Unknown',item_type:r[5]||'',item_name:r[6]||'',description:r[7]||'',tags:r[8]||''});
+    const rn=r[iNum]||'';
+    if(!rn.trim().match(/^\d+$/))continue;
+    data.push({row_num:parseInt(rn),dropoff_date:r[iDate]||'',market:r[iMarket]||'',client:r[iClient]||'',food_partner:r[iPartner]||'Unknown',item_type:r[iType]||'',item_name:r[iName]||'',description:r[iDesc]||'',tags:r[iTags]||''});
   }
   const issues=[];
   for(const row of data){
@@ -454,6 +537,13 @@ function showDashboard() {
   document.getElementById('dashboard').style.display='block';
   document.getElementById('topbar-actions').style.display='flex';
   document.getElementById('meta-label').textContent=csvFilename?`  ·  ${csvFilename}`:'';
+  const dates=[...new Set(allIssues.map(i=>i.dropoff_date).filter(Boolean))].sort();
+  const drLabel=document.getElementById('date-range-label');
+  if(dates.length){
+    const lo=formatDate(dates[0]), hi=formatDate(dates[dates.length-1]);
+    drLabel.textContent=lo===hi?`Scheduled: ${lo}`:`Scheduled: ${lo} – ${hi}`;
+    drLabel.style.display='';
+  } else { drLabel.style.display='none'; }
   renderSummary();
   renderSidebar();
   renderTable();
@@ -466,18 +556,40 @@ function resetUpload() {
   document.getElementById('meta-label').textContent='';
   allIssues=[];progress={};activePartner='All';
   document.getElementById('csv-input').value='';
+  document.getElementById('date-range-label').style.display='none';
 }
+
+// ── Grouping helpers ───────────────────────────────────────────────────────
+function getGroupedItems(issueList) {
+  const map = new Map();
+  for (const issue of issueList) {
+    if (!map.has(issue.row_num)) {
+      map.set(issue.row_num, {
+        row_num: issue.row_num, food_partner: issue.food_partner,
+        client: issue.client, item_name: issue.item_name,
+        description: issue.description, tags: issue.tags, issues: []
+      });
+    }
+    map.get(issue.row_num).issues.push(issue);
+  }
+  return [...map.values()];
+}
+function itemKey(rn)         { return `item-${rn}`; }
+function getItemStatus(rn)   { return (progress[itemKey(rn)]||{}).status   || 'Open'; }
+function getItemAssignee(rn) { return (progress[itemKey(rn)]||{}).assignee || ''; }
+function getItemNotes(rn)    { return (progress[itemKey(rn)]||{}).notes    || ''; }
 
 // ── Summary cards ──────────────────────────────────────────────────────────
 function renderSummary() {
-  const total     = allIssues.length;
-  const partners  = new Set(allIssues.map(i=>i.food_partner)).size;
-  const clients   = new Set(allIssues.map(i=>i.client)).size;
-  const conflict  = allIssues.filter(i=>i.type==='Tag Conflict').length;
-  const missing   = allIssues.filter(i=>i.type==='Missing Tag').length;
-  const typo      = allIssues.filter(i=>i.type==='Typo').length;
-  const fixed     = allIssues.filter(i=>getStatus(i.key)==='Fixed'||getStatus(i.key)==="Won't Fix").length;
-  const pct       = total?Math.round(fixed/total*100):0;
+  const grouped      = getGroupedItems(allIssues);
+  const totalItems   = grouped.length;
+  const partners     = new Set(allIssues.map(i=>i.food_partner)).size;
+  const clients      = new Set(allIssues.map(i=>i.client)).size;
+  const conflictItems= grouped.filter(g=>g.issues.some(i=>i.type==='Tag Conflict')).length;
+  const missingItems = grouped.filter(g=>g.issues.some(i=>i.type==='Missing Tag')).length;
+  const typoItems    = grouped.filter(g=>g.issues.some(i=>i.type==='Typo')).length;
+  const fixedItems   = grouped.filter(g=>{ const s=getItemStatus(g.row_num); return s==='Fixed'||s==="Won't Fix"; }).length;
+  const pct          = totalItems?Math.round(fixedItems/totalItems*100):0;
 
   document.getElementById('summary-row').innerHTML=`
     <div class="stat-card partners"><div class="n">${partners}</div><div class="l">Food Partners<br>with Issues</div></div>
@@ -486,10 +598,10 @@ function renderSummary() {
       <div class="l">Clients<br>Impacted</div>
       <div class="hint-label">▸ View list</div>
     </div>
-    <div class="stat-card conflict"><div class="n">${conflict}</div><div class="l">Tag<br>Conflicts</div></div>
-    <div class="stat-card missing"><div class="n">${missing}</div><div class="l">Missing<br>Tags</div></div>
-    <div class="stat-card typo"><div class="n">${typo}</div><div class="l">Typos</div></div>
-    <div class="stat-card done"><div class="n">${fixed}/${total}</div><div class="l">Resolved</div></div>
+    <div class="stat-card conflict"><div class="n">${conflictItems}</div><div class="l">Items w/<br>Tag Conflicts</div></div>
+    <div class="stat-card missing"><div class="n">${missingItems}</div><div class="l">Items w/<br>Missing Tags</div></div>
+    <div class="stat-card typo"><div class="n">${typoItems}</div><div class="l">Items w/<br>Typos</div></div>
+    <div class="stat-card done"><div class="n">${fixedItems}/${totalItems}</div><div class="l">Items Resolved</div></div>
   `;
   document.getElementById('progress-pct').textContent=pct+'%';
   document.getElementById('progress-fill').style.width=pct+'%';
@@ -500,9 +612,10 @@ function renderSidebar() {
   const q = (document.getElementById('sidebar-search').value||'').toLowerCase();
   const partners = ['All', ...new Set(allIssues.map(i=>i.food_partner).sort())];
   const filtered = partners.filter(p => p==='All' || p.toLowerCase().includes(q));
+  const grouped2 = getGroupedItems(allIssues);
 
   document.getElementById('sidebar-list').innerHTML = filtered.map(p => {
-    const count = p==='All' ? allIssues.length : allIssues.filter(i=>i.food_partner===p).length;
+    const count = p==='All' ? grouped2.length : grouped2.filter(g=>g.food_partner===p).length;
     const active = activePartner===p;
     return `<div class="sidebar-item${p==='All'?' all-item':''}${active?' active':''}" onclick="setPartner('${p.replace(/'/g,"\\'")}')">
       <span class="si-name">${p==='All'?'All Partners':esc(p)}</span>
@@ -534,56 +647,83 @@ function renderTable() {
   const fType   = document.getElementById('filter-type').value;
   const fPrio   = document.getElementById('filter-priority').value;
   const fStatus = document.getElementById('filter-status').value;
-
-  let filtered = allIssues.filter(i => {
-    if(activePartner!=='All'&&i.food_partner!==activePartner)return false;
-    if(fType   &&i.type!==fType)return false;
-    if(fPrio   &&i.priority!==fPrio)return false;
-    if(fStatus &&getStatus(i.key)!==fStatus)return false;
-    if(search  &&!`${i.item_name} ${i.detail} ${i.food_partner} ${i.description} ${i.client}`.toLowerCase().includes(search))return false;
-    return true;
-  });
-
   const typeOrder={'Tag Conflict':0,'Incorrect Tag':1,'Missing Tag':2,'Typo':3};
   const prioOrder={'High':0,'Medium':1,'Low':2};
-  filtered.sort((a,b)=>prioOrder[a.priority]-prioOrder[b.priority]||typeOrder[a.type]-typeOrder[b.type]||a.row_num-b.row_num);
 
-  document.getElementById('result-count').textContent=`${filtered.length} issue${filtered.length===1?'':'s'}`;
+  // Filter issues, then group into items
+  let filtered = allIssues.filter(i => {
+    if(activePartner!=='All'&&i.food_partner!==activePartner)return false;
+    if(fType && i.type!==fType)return false;
+    if(fPrio && i.priority!==fPrio)return false;
+    if(search && !`${i.item_name} ${i.detail} ${i.food_partner} ${i.description} ${i.client}`.toLowerCase().includes(search))return false;
+    return true;
+  });
+  let grouped = getGroupedItems(filtered);
+  if(fStatus) grouped = grouped.filter(g => getItemStatus(g.row_num)===fStatus);
+
+  // Sort items by worst priority, then row_num
+  grouped.sort((a,b)=>{
+    const aP=Math.min(...a.issues.map(i=>prioOrder[i.priority]??9));
+    const bP=Math.min(...b.issues.map(i=>prioOrder[i.priority]??9));
+    return aP-bP || a.row_num-b.row_num;
+  });
+
+  document.getElementById('result-count').textContent=`${grouped.length} item${grouped.length===1?'':'s'}`;
   const tbody=document.getElementById('issue-tbody');
   const empty=document.getElementById('empty-state');
-
-  if(filtered.length===0){tbody.innerHTML='';empty.style.display='block';return;}
+  if(grouped.length===0){tbody.innerHTML='';empty.style.display='block';return;}
   empty.style.display='none';
 
-  tbody.innerHTML=filtered.map(issue=>{
-    const key=issue.key;
-    const status=getStatus(key);
+  tbody.innerHTML=grouped.map(item=>{
+    const rn=item.row_num;
+    const key=itemKey(rn);
+    const status=getItemStatus(rn);
     const sc=STATUS_CLS[status]||'open';
-    return `<tr>
-      <td><span class="row-num">${issue.row_num}</span></td>
-      <td>
-        <div class="item-partner">${esc(issue.food_partner)}</div>
-        <div class="item-name">${esc(issue.item_name)}</div>
-        ${issue.description?`<div class="item-desc">${esc(issue.description.slice(0,80))}${issue.description.length>80?'…':''}</div>`:''}
-      </td>
-      <td><span class="badge badge-${TYPE_BADGE[issue.type]}">${issue.type}</span></td>
-      <td><span class="badge badge-${PRIO_BADGE[issue.priority]}">${issue.priority}</span></td>
-      <td>
+    const sortedIssues=[...item.issues].sort((a,b)=>typeOrder[a.type]-typeOrder[b.type]||prioOrder[a.priority]-prioOrder[b.priority]);
+    const issuesHTML=sortedIssues.map(issue=>`
+      <div class="issue-row">
+        <div class="issue-badges">
+          <span class="badge badge-${TYPE_BADGE[issue.type]}">${issue.type}</span>
+          <span class="badge badge-${PRIO_BADGE[issue.priority]}">${issue.priority}</span>
+        </div>
         <div class="detail-text">${esc(issue.detail)}</div>
         <div class="fix-text">→ ${esc(issue.fix)}</div>
-      </td>
+      </div>`).join('');
+    return `<tr>
+      <td><span class="row-num">${rn}</span></td>
       <td>
-        <select class="status-sel status-${sc}" onchange="saveProgress('${esc(key)}','status',this.value);this.className='status-sel status-'+(${JSON.stringify(STATUS_CLS)}[this.value]||'open')">
+        <div class="item-partner">${esc(item.food_partner)}</div>
+        <div class="item-name">${esc(item.item_name)}</div>
+        ${item.description?`<div class="item-desc">${esc(item.description.slice(0,80))}${item.description.length>80?'…':''}</div>`:''}
+      </td>
+      <td>${issuesHTML}</td>
+      <td>
+        <select class="status-sel status-${sc}" onchange="saveProgress('${esc(key)}','status',this.value);applyStatusClass(this)">
           ${['Open','In Progress','Fixed',"Won't Fix"].map(s=>`<option${status===s?' selected':''}>${s}</option>`).join('')}
         </select>
       </td>
-      <td><input class="assignee-input" placeholder="Name…" value="${esc(getAssignee(key))}" onchange="saveProgress('${esc(key)}','assignee',this.value)"/></td>
-      <td><textarea class="notes-input" placeholder="Notes…" onchange="saveProgress('${esc(key)}','notes',this.value)">${esc(getNotes(key))}</textarea></td>
+      <td><input class="assignee-input" placeholder="Name…" value="${esc(getItemAssignee(rn))}" onchange="saveProgress('${esc(key)}','assignee',this.value)"/></td>
+      <td><textarea class="notes-input" placeholder="Notes…" onchange="saveProgress('${esc(key)}','notes',this.value)">${esc(getItemNotes(rn))}</textarea></td>
     </tr>`;
   }).join('');
 }
 
+function formatDate(d) {
+  if (!d) return '';
+  const [y,m,day] = d.split('-');
+  const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return `${months[parseInt(m,10)-1]} ${parseInt(day,10)}, ${y}`;
+}
+
+function switchTab(id, btn) {
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  btn.classList.add('active');
+}
+
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
+function applyStatusClass(el){el.className='status-sel status-'+(STATUS_CLS[el.value]||'open');}
 
 // ── Clients modal ──────────────────────────────────────────────────────────
 function openClientsModal() {
@@ -616,8 +756,22 @@ function saveProgressToStorage(){try{localStorage.setItem(STORAGE_KEY,JSON.strin
 function loadProgressFromStorage(){try{const raw=localStorage.getItem(STORAGE_KEY);if(!raw)return;const d=JSON.parse(raw);if(d.progress)progress=d.progress;}catch{}}
 
 function downloadCSV() {
-  const headers=['Row #','Food Partner','Client','Menu Item Name','Issue Type','Priority','Issue Detail','Recommended Fix','Current Tags','Description','Status','Assigned To','Notes'];
-  const rows=allIssues.map(i=>[i.row_num,i.food_partner,i.client,i.item_name,i.type,i.priority,i.detail,i.fix,i.current_tags,i.description,getStatus(i.key),getAssignee(i.key),getNotes(i.key)].map(v=>`"${String(v||'').replace(/"/g,'""')}"`));
+  const headers=['Row #','Food Partner','Client','Menu Item Name','Issue #','Issue Type','Priority','Issue Detail','Recommended Fix','Current Tags','Description','Item Status','Assigned To','Notes'];
+  const typeOrder={'Tag Conflict':0,'Incorrect Tag':1,'Missing Tag':2,'Typo':3};
+  const prioOrder={'High':0,'Medium':1,'Low':2};
+  const grouped=getGroupedItems(allIssues);
+  grouped.sort((a,b)=>a.food_partner.localeCompare(b.food_partner)||a.row_num-b.row_num);
+  const rows=[];
+  for(const item of grouped){
+    const sorted=[...item.issues].sort((a,b)=>typeOrder[a.type]-typeOrder[b.type]||prioOrder[a.priority]-prioOrder[b.priority]);
+    sorted.forEach((issue,idx)=>{
+      rows.push([item.row_num,item.food_partner,item.client,item.item_name,
+        `${idx+1} of ${sorted.length}`,issue.type,issue.priority,
+        issue.detail,issue.fix,item.tags,item.description,
+        getItemStatus(item.row_num),getItemAssignee(item.row_num),getItemNotes(item.row_num)
+      ].map(v=>`"${String(v||'').replace(/"/g,'""')}"`));
+    });
+  }
   const csv=[headers.map(h=>`"${h}"`).join(','),...rows.map(r=>r.join(','))].join('\r\n');
   const a=document.createElement('a');
   a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
