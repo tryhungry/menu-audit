@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Menu Audit Dashboard</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:#f0f2f5;color:#1a1a2e;min-height:100vh}
+
+/* ── Top bar ── */
+.topbar{background:#1a1a2e;color:#fff;padding:0 28px;display:flex;align-items:center;justify-content:space-between;height:56px;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.25)}
+.topbar h1{font-size:17px;font-weight:700;letter-spacing:-.3px}
+.topbar .meta{font-size:12px;color:#8899bb;margin-left:16px}
+.topbar-right{display:flex;gap:10px;align-items:center}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;border:none;transition:.15s}
+.btn-ghost{background:rgba(255,255,255,.1);color:#fff}.btn-ghost:hover{background:rgba(255,255,255,.18)}
+.btn-primary{background:#4f7cff;color:#fff}.btn-primary:hover{background:#3a66e8}
+.btn-success{background:#059669;color:#fff}.btn-success:hover{background:#047857}
+.btn-sm{padding:5px 10px;font-size:11px}
+
+/* ── Upload screen ── */
+#upload-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:calc(100vh - 56px);padding:40px 20px}
+.upload-card{background:#fff;border-radius:16px;padding:48px 56px;max-width:520px;width:100%;text-align:center;box-shadow:0 4px 24px rgba(0,0,0,.08)}
+.upload-icon{font-size:48px;margin-bottom:16px}
+.upload-card h2{font-size:22px;font-weight:700;margin-bottom:8px}
+.upload-card p{color:#666;font-size:14px;margin-bottom:28px;line-height:1.6}
+.drop-zone{border:2px dashed #c5cde0;border-radius:12px;padding:32px;cursor:pointer;transition:.2s;background:#fafbff}
+.drop-zone:hover,.drop-zone.drag-over{border-color:#4f7cff;background:#f0f4ff}
+.drop-zone input{display:none}
+.drop-zone label{cursor:pointer;font-size:14px;color:#555;display:block}
+.drop-zone label strong{color:#4f7cff}
+.drop-zone .hint{font-size:12px;color:#999;margin-top:8px}
+.import-row{margin-top:20px;display:flex;align-items:center;gap:10px;justify-content:center}
+.import-row span{font-size:12px;color:#999}
+
+/* ── Dashboard ── */
+#dashboard{display:none;padding:24px 28px}
+.summary-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-bottom:24px}
+.stat-card{background:#fff;border-radius:10px;padding:18px 22px;box-shadow:0 1px 4px rgba(0,0,0,.07)}
+.stat-card .n{font-size:32px;font-weight:800;line-height:1}
+.stat-card .l{font-size:12px;color:#888;margin-top:5px}
+.stat-card.conflict .n{color:#7c3aed}
+.stat-card.incorrect .n{color:#dc2626}
+.stat-card.missing .n{color:#d97706}
+.stat-card.typo .n{color:#2563eb}
+.stat-card.done .n{color:#059669}
+
+/* progress */
+.progress-bar-wrap{background:#fff;border-radius:10px;padding:18px 22px;margin-bottom:24px;box-shadow:0 1px 4px rgba(0,0,0,.07)}
+.progress-bar-wrap .label{font-size:13px;font-weight:600;margin-bottom:10px;display:flex;justify-content:space-between}
+.progress-track{height:10px;background:#e8eaee;border-radius:99px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,#4f7cff,#059669);border-radius:99px;transition:.4s}
+
+/* ── Controls ── */
+.controls{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:20px;align-items:center}
+.controls select,.controls input[type=text]{padding:8px 12px;border:1px solid #dde2ec;border-radius:8px;font-size:13px;background:#fff;color:#1a1a2e;outline:none}
+.controls select:focus,.controls input:focus{border-color:#4f7cff}
+.controls .spacer{flex:1}
+
+/* ── Partner tabs ── */
+.tabs{display:flex;gap:0;border-bottom:2px solid #e8eaee;margin-bottom:20px;overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{padding:10px 18px;font-size:13px;font-weight:600;color:#888;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;white-space:nowrap;transition:.15s}
+.tab:hover{color:#4f7cff}
+.tab.active{color:#1a1a2e;border-bottom-color:#4f7cff}
+.tab .count{display:inline-flex;align-items:center;justify-content:center;background:#f0f2f5;color:#555;border-radius:20px;font-size:10px;padding:1px 7px;margin-left:6px;font-weight:700}
+.tab.active .count{background:#4f7cff;color:#fff}
+
+/* ── Table ── */
+.table-wrap{background:#fff;border-radius:12px;box-shadow:0 1px 4px rgba(0,0,0,.07);overflow:hidden}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;padding:11px 14px;background:#f8f9fc;color:#666;font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid #e8eaee;white-space:nowrap}
+td{padding:11px 14px;border-bottom:1px solid #f3f4f6;vertical-align:top}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#fafbff}
+.item-name{font-weight:600;font-size:13px;margin-bottom:2px}
+.item-desc{font-size:11px;color:#888;margin-top:3px;line-height:1.45}
+.row-num{color:#bbb;font-size:11px}
+
+/* badges */
+.badge{display:inline-flex;align-items:center;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:700;white-space:nowrap}
+.badge-conflict{background:#ede9fe;color:#6d28d9}
+.badge-incorrect{background:#fee2e2;color:#b91c1c}
+.badge-missing{background:#fef3c7;color:#92400e}
+.badge-typo{background:#dbeafe;color:#1e40af}
+.badge-high{background:#fee2e2;color:#b91c1c}
+.badge-medium{background:#fef3c7;color:#92400e}
+.badge-low{background:#d1fae5;color:#065f46}
+
+/* status */
+.status-sel{padding:5px 10px;border-radius:7px;font-size:12px;font-weight:600;border:none;cursor:pointer;outline:none;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23888'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center;padding-right:24px;min-width:120px}
+.status-open{background:#fef3c7;color:#92400e}
+.status-inprogress{background:#e0f2fe;color:#0369a1}
+.status-fixed{background:#d1fae5;color:#065f46}
+.status-wontfix{background:#f3f4f6;color:#6b7280}
+
+.notes-input{width:100%;border:1px solid #e8eaee;border-radius:6px;padding:5px 8px;font-size:11px;font-family:inherit;resize:none;min-height:34px;outline:none;color:#444;background:#fafbff}
+.notes-input:focus{border-color:#4f7cff;background:#fff}
+.assignee-input{width:100%;border:1px solid #e8eaee;border-radius:6px;padding:5px 8px;font-size:11px;font-family:inherit;outline:none;color:#444;background:#fafbff}
+.assignee-input:focus{border-color:#4f7cff}
+
+.fix-text{font-size:12px;color:#065f46;font-weight:600;line-height:1.4}
+.detail-text{font-size:12px;color:#555;line-height:1.4}
+
+.empty-state{text-align:center;padding:48px;color:#888;font-size:14px}
+
+/* share banner */
+.share-banner{background:#1e3a5f;color:#fff;border-radius:10px;padding:14px 20px;margin-bottom:20px;display:flex;align-items:center;gap:14px;font-size:13px}
+.share-banner strong{font-size:14px}
+.share-banner p{color:#93c5fd;font-size:12px;margin-top:2px}
+
+/* ── Mobile ── */
+@media(max-width:768px){
+  #dashboard{padding:16px}
+  .summary-row{grid-template-columns:repeat(2,1fr)}
+  th:nth-child(n+5),td:nth-child(n+5){display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- Top bar -->
+<div class="topbar">
+  <div style="display:flex;align-items:center">
+    <h1>Menu Audit Dashboard</h1>
+    <span class="meta" id="meta-label"></span>
+  </div>
+  <div class="topbar-right" id="topbar-actions" style="display:none">
+    <button class="btn btn-ghost btn-sm" onclick="exportProgress()">⬇ Export Progress</button>
+    <label class="btn btn-ghost btn-sm" style="cursor:pointer">
+      ⬆ Import Progress
+      <input type="file" accept=".json" style="display:none" onchange="importProgress(event)">
+    </label>
+    <button class="btn btn-ghost btn-sm" onclick="resetUpload()">⟳ New CSV</button>
+  </div>
+</div>
+
+<!-- Upload screen -->
+<div id="upload-screen">
+  <div class="upload-card">
+    <div class="upload-icon">📋</div>
+    <h2>Menu Audit Dashboard</h2>
+    <p>Upload the weekly menu items CSV exported from Looker.<br>Issues will be detected automatically.</p>
+    <div class="drop-zone" id="drop-zone" ondragover="onDragOver(event)" ondragleave="onDragLeave(event)" ondrop="onDrop(event)">
+      <input type="file" id="csv-input" accept=".csv" onchange="handleFile(this.files[0])">
+      <label for="csv-input">
+        <strong>Click to upload</strong> or drag & drop your CSV<br>
+        <span class="hint">next_week's_menu_items_(scheduled).csv</span>
+      </label>
+    </div>
+    <div class="import-row">
+      <span>Already have saved progress?</span>
+      <label class="btn btn-ghost btn-sm" style="background:#f0f2f5;color:#555;cursor:pointer">
+        Import Progress JSON
+        <input type="file" accept=".json" style="display:none" onchange="importProgressUploadScreen(event)">
+      </label>
+    </div>
+  </div>
+</div>
+
+<!-- Dashboard -->
+<div id="dashboard">
+  <!-- Share info -->
+  <div class="share-banner">
+    <div>💡</div>
+    <div>
+      <strong>Sharing & Syncing Progress</strong>
+      <p>Use <b>Export Progress</b> to download your current state as a JSON file. Share it with your team via Slack or email. They click <b>Import Progress</b> to load it. Changes are saved automatically as you work.</p>
+    </div>
+  </div>
+
+  <!-- Summary -->
+  <div class="summary-row" id="summary-row"></div>
+
+  <!-- Progress bar -->
+  <div class="progress-bar-wrap">
+    <div class="label">
+      <span>Overall Completion</span>
+      <span id="progress-pct">0%</span>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+  </div>
+
+  <!-- Controls -->
+  <div class="controls">
+    <input type="text" id="search-input" placeholder="Search item name or detail…" oninput="renderTable()" style="min-width:220px">
+    <select id="filter-type" onchange="renderTable()">
+      <option value="">All Issue Types</option>
+      <option value="Tag Conflict">Tag Conflict</option>
+      <option value="Incorrect Tag">Incorrect Tag</option>
+      <option value="Missing Tag">Missing Tag</option>
+      <option value="Typo">Typo</option>
+    </select>
+    <select id="filter-priority" onchange="renderTable()">
+      <option value="">All Priorities</option>
+      <option value="High">High</option>
+      <option value="Medium">Medium</option>
+      <option value="Low">Low</option>
+    </select>
+    <select id="filter-status" onchange="renderTable()">
+      <option value="">All Statuses</option>
+      <option value="Open">Open</option>
+      <option value="In Progress">In Progress</option>
+      <option value="Fixed">Fixed</option>
+      <option value="Won't Fix">Won't Fix</option>
+    </select>
+    <div class="spacer"></div>
+    <span id="result-count" style="font-size:12px;color:#888"></span>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs" id="tabs"></div>
+
+  <!-- Table -->
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Menu Item</th>
+          <th>Issue Type</th>
+          <th>Priority</th>
+          <th>Detail & Fix</th>
+          <th>Status</th>
+          <th>Assigned To</th>
+          <th>Notes</th>
+        </tr>
+      </thead>
+      <tbody id="issue-tbody"></tbody>
+    </table>
+    <div id="empty-state" class="empty-state" style="display:none">No issues match your filters.</div>
+  </div>
+</div>
+
+<script>
+// ── State ──────────────────────────────────────────────────────────────────
+let allIssues = [];   // enriched issues from audit
+let progress  = {};   // { issueKey: { status, assignee, notes } }
+let activeTab = 'All';
+let csvFilename = '';
+
+// ── Audit rules ────────────────────────────────────────────────────────────
+const MISSING_RULES = [
+  { tag:'contains dairy',    triggers:['cheese','cream cheese','butter','parmesan','mozzarella','paneer','alfredo','brie','cheddar','yogurt','crème','ricotta','provolone','fontina','queso','feta','burrata','crema','cream sauce','creamy sauce','heavy cream','half and half','milk','swiss'], exclude:['dairy-free','vegan cheese','coconut cream','coconut milk','oat milk','almond milk'] },
+  { tag:'contains eggs',     triggers:['egg','aioli','mayo','mayonnaise','hollandaise','crema','crème fraiche'], exclude:['eggplant','vegan mayo','vegan aioli'] },
+  { tag:'contains wheat',    triggers:['pasta','linguine','fettuccine','fettucine','penne','rigatoni','spaghetti','tagliatelle','orecchiette','rotini','farfalle','tortellini','lasagna','gnocchi','bread','flour tortilla','brioche','bun','roll','crouton','croûton','panko','roux','sub ','sandwich bread','pita','naan','focaccia','empanada','wonton','dumpling','pancake','waffle','crepe'], exclude:['rice noodle','corn tortilla','gluten-free','prepared without gluten','rice pasta','chickpea pasta'] },
+  { tag:'contains gluten',   triggers:['pasta','linguine','fettuccine','fettucine','penne','rigatoni','spaghetti','bread','flour tortilla','brioche','bun','roll','crouton','croûton','panko','roux','brioche'], exclude:['rice noodle','corn tortilla','gluten-free','prepared without gluten','rice pasta','chickpea pasta'] },
+  { tag:'contains allium',   triggers:['garlic','onion','shallot','leek','chive','scallion','green onion'], exclude:[] },
+  { tag:'contains soy',      triggers:['soy sauce','tofu','miso','edamame','tamari','soy'], exclude:['soy-free'] },
+  { tag:'contains sesame',   triggers:['tahini','sesame'], exclude:[] },
+  { tag:'contains shellfish',triggers:['shrimp','crab','lobster','scallop','prawn','oyster','clam'], exclude:[] },
+  { tag:'contains fish',     triggers:['salmon','tuna',' fish','anchovy','cod','tilapia','halibut','mahi','catfish','snapper','trout','bass','flounder','fish sauce'], exclude:['starfish','crayfish'] },
+  { tag:'contains peanuts',  triggers:['peanut'], exclude:[] },
+  { tag:'contains treenuts', triggers:['cashew','almond','walnut','pecan','pine nut','macadamia','hazelnut','pistachio','praline'], exclude:[] },
+  { tag:'contains pork',     triggers:['pork','bacon','ham','prosciutto','pancetta','lard','sausage','chorizo','carnitas','guanciale'], exclude:['turkey sausage','chicken sausage','veggie sausage','plant-based sausage'] },
+  { tag:'spicy',             triggers:['jalapeño','jalapeno','chipotle','serrano','sriracha','harissa','spicy','red pepper flake','hot sauce','chili oil','gochujang'], exclude:[] },
+];
+
+const VEGAN_CONFLICTS     = ['meat','beef','chicken','pork','fish','shrimp','salmon','tuna','cheese','cream','butter','milk','egg','honey','dairy','lamb','turkey'];
+const VEGETARIAN_CONFLICTS = ['beef','pork','chicken','shrimp','salmon','tuna','fish','lamb','turkey','bacon','ham','prosciutto','carnitas','chorizo','sausage'];
+
+function parseTags(rawTags) {
+  if (!rawTags) return new Set();
+  try {
+    const parsed = JSON.parse(rawTags);
+    return new Set(parsed.map(t => t.toLowerCase().trim()));
+  } catch {
+    return new Set(rawTags.split(',').map(t => t.replace(/["\[\]]/g,'').toLowerCase().trim()).filter(Boolean));
+  }
+}
+
+function descContains(desc, name, triggers, exclude=[]) {
+  const hay = (desc + ' ' + name).toLowerCase();
+  if (exclude.some(ex => hay.includes(ex.toLowerCase()))) return false;
+  return triggers.some(tr => hay.includes(tr.toLowerCase()));
+}
+
+function auditRow(row) {
+  const issues = [];
+  const tags   = parseTags(row.tags);
+  const desc   = row.description || '';
+  const name   = row.item_name   || '';
+  const hay    = (desc + ' ' + name).toLowerCase();
+
+  // Tag conflicts
+  const hasGlutenFree = tags.has('prepared without gluten');
+  const hasGluten     = tags.has('contains gluten') || tags.has('contains wheat & gluten') || tags.has('contains gluten & wheat');
+  if (hasGlutenFree && hasGluten) {
+    issues.push({ type:'Tag Conflict', priority:'High', detail:'Tagged "prepared without gluten" AND "contains gluten" — these contradict each other.', fix:'Remove whichever is incorrect — confirm with food partner.' });
+  }
+
+  // Vegan conflicts
+  if (tags.has('vegan') && VEGAN_CONFLICTS.some(c => hay.includes(c))) {
+    const found = VEGAN_CONFLICTS.filter(c => hay.includes(c));
+    issues.push({ type:'Tag Conflict', priority:'High', detail:`Tagged "vegan" but description contains: ${found.join(', ')}.`, fix:'Remove "vegan" tag or verify with food partner.' });
+  }
+
+  // Vegetarian conflicts
+  if (tags.has('vegetarian') && !tags.has('vegan') && VEGETARIAN_CONFLICTS.some(c => hay.includes(c))) {
+    const found = VEGETARIAN_CONFLICTS.filter(c => hay.includes(c));
+    issues.push({ type:'Tag Conflict', priority:'High', detail:`Tagged "vegetarian" but description contains: ${found.join(', ')}.`, fix:'Remove "vegetarian" tag or verify with food partner.' });
+  }
+
+  // Missing tags — only check if description is non-empty (or use name-only for key items)
+  const checkable = desc.length > 0;
+  if (checkable || name.length > 0) {
+    for (const rule of MISSING_RULES) {
+      // Skip gluten/wheat if already has prepared without gluten
+      if ((rule.tag === 'contains wheat' || rule.tag === 'contains gluten') && hasGlutenFree) continue;
+      // Check if any existing tag covers this (partial match)
+      const alreadyTagged = [...tags].some(t => t.includes(rule.tag) || (rule.tag.includes('&') && t.includes(rule.tag.split('&')[0].trim())));
+      // also check for combined tags like "contains wheat & dairy"
+      const combinedCovered = [...tags].some(t => t.includes(rule.tag.replace('contains ','').split(' ')[0]));
+      if (alreadyTagged || combinedCovered) continue;
+      if (descContains(desc, checkable ? '' : name, rule.triggers, rule.exclude)) {
+        const found = rule.triggers.filter(tr => hay.includes(tr.toLowerCase()));
+        const priority = ['contains dairy','contains eggs','contains shellfish','contains fish','contains peanuts','contains treenuts','contains wheat'].includes(rule.tag) ? 'High' : 'Medium';
+        issues.push({ type:'Missing Tag', priority, detail:`Missing "${rule.tag}" — found in description: "${found.slice(0,3).join('", "')}"`, fix:`Add "${rule.tag}"` });
+      }
+    }
+  }
+
+  return issues;
+}
+
+function checkTagCoverage(tagSet, tag) {
+  for (const t of tagSet) {
+    if (t === tag) return true;
+    if (t.includes(tag.replace('contains ',''))) return true;
+  }
+  return false;
+}
+
+// ── CSV Parsing ────────────────────────────────────────────────────────────
+function parseCSV(text) {
+  const lines = [];
+  let cur = '', inQ = false;
+  for (let i = 0; i < text.length; i++) {
+    const ch = text[i];
+    if (ch === '"') { inQ = !inQ; cur += ch; }
+    else if (ch === '\n' && !inQ) { lines.push(cur); cur = ''; }
+    else { cur += ch; }
+  }
+  if (cur) lines.push(cur);
+
+  const rows = lines.map(line => {
+    const cols = []; let field = '', q = false;
+    for (let i = 0; i < line.length; i++) {
+      const ch = line[i];
+      if (ch === '"' && !q) { q = true; }
+      else if (ch === '"' && q && line[i+1] === '"') { field += '"'; i++; }
+      else if (ch === '"' && q) { q = false; }
+      else if (ch === ',' && !q) { cols.push(field.trim()); field = ''; }
+      else { field += ch; }
+    }
+    cols.push(field.trim());
+    return cols;
+  });
+
+  return rows;
+}
+
+function processCSV(text) {
+  const rows = parseCSV(text);
+  if (rows.length < 2) return [];
+
+  const data = [];
+  for (let i = 1; i < rows.length; i++) {
+    const r = rows[i];
+    if (!r[0] || !r[0].trim().match(/^\d+$/)) continue;
+    data.push({
+      row_num:      parseInt(r[0]),
+      dropoff_date: r[1] || '',
+      market:       r[2] || '',
+      client:       r[3] || '',
+      food_partner: r[4] || 'Unknown',
+      item_type:    r[5] || '',
+      item_name:    r[6] || '',
+      description:  r[7] || '',
+      tags:         r[8] || '',
+    });
+  }
+
+  const issues = [];
+  for (const row of data) {
+    const rowIssues = auditRow(row);
+    for (const issue of rowIssues) {
+      issues.push({ ...row, ...issue, key: `${row.row_num}-${issue.type}-${issue.detail.slice(0,30)}` });
+    }
+  }
+  return issues;
+}
+
+// ── File handling ──────────────────────────────────────────────────────────
+function handleFile(file) {
+  if (!file) return;
+  csvFilename = file.name;
+  const reader = new FileReader();
+  reader.onload = e => {
+    allIssues = processCSV(e.target.result);
+    loadProgressFromStorage();
+    showDashboard();
+  };
+  reader.readAsText(file);
+}
+
+function onDragOver(e) { e.preventDefault(); document.getElementById('drop-zone').classList.add('drag-over'); }
+function onDragLeave()  { document.getElementById('drop-zone').classList.remove('drag-over'); }
+function onDrop(e)      { e.preventDefault(); onDragLeave(); handleFile(e.dataTransfer.files[0]); }
+
+// ── Dashboard ──────────────────────────────────────────────────────────────
+function showDashboard() {
+  document.getElementById('upload-screen').style.display = 'none';
+  document.getElementById('dashboard').style.display = 'block';
+  document.getElementById('topbar-actions').style.display = 'flex';
+  document.getElementById('meta-label').textContent = csvFilename ? `  ·  ${csvFilename}` : '';
+  renderSummary();
+  renderTabs();
+  renderTable();
+}
+
+function resetUpload() {
+  document.getElementById('upload-screen').style.display = 'flex';
+  document.getElementById('dashboard').style.display = 'none';
+  document.getElementById('topbar-actions').style.display = 'none';
+  document.getElementById('meta-label').textContent = '';
+  allIssues = []; progress = {}; activeTab = 'All';
+  document.getElementById('csv-input').value = '';
+}
+
+// ── Summary cards ──────────────────────────────────────────────────────────
+function renderSummary() {
+  const total     = allIssues.length;
+  const conflict  = allIssues.filter(i=>i.type==='Tag Conflict').length;
+  const incorrect = allIssues.filter(i=>i.type==='Incorrect Tag').length;
+  const missing   = allIssues.filter(i=>i.type==='Missing Tag').length;
+  const typo      = allIssues.filter(i=>i.type==='Typo').length;
+  const fixed     = allIssues.filter(i=>getStatus(i.key)==='Fixed' || getStatus(i.key)==="Won't Fix").length;
+  const pct       = total ? Math.round(fixed/total*100) : 0;
+
+  document.getElementById('summary-row').innerHTML = `
+    <div class="stat-card conflict"><div class="n">${conflict}</div><div class="l">Tag Conflicts</div></div>
+    <div class="stat-card incorrect"><div class="n">${incorrect}</div><div class="l">Incorrect Tags</div></div>
+    <div class="stat-card missing"><div class="n">${missing}</div><div class="l">Missing Tags</div></div>
+    <div class="stat-card typo"><div class="n">${typo}</div><div class="l">Typos</div></div>
+    <div class="stat-card done"><div class="n">${fixed}/${total}</div><div class="l">Resolved</div></div>
+  `;
+  document.getElementById('progress-pct').textContent = pct + '%';
+  document.getElementById('progress-fill').style.width = pct + '%';
+}
+
+// ── Tabs ───────────────────────────────────────────────────────────────────
+function renderTabs() {
+  const partners = ['All', ...new Set(allIssues.map(i=>i.food_partner).sort())];
+  document.getElementById('tabs').innerHTML = partners.map(p => {
+    const count = p === 'All' ? allIssues.length : allIssues.filter(i=>i.food_partner===p).length;
+    return `<div class="tab${activeTab===p?' active':''}" onclick="setTab('${p.replace(/'/g,"\\'")}')">
+      ${p} <span class="count">${count}</span>
+    </div>`;
+  }).join('');
+}
+
+function setTab(p) { activeTab = p; renderTabs(); renderTable(); }
+
+// ── Table ──────────────────────────────────────────────────────────────────
+const TYPE_BADGE  = { 'Tag Conflict':'conflict','Incorrect Tag':'incorrect','Missing Tag':'missing','Typo':'typo' };
+const PRIO_BADGE  = { 'High':'high','Medium':'medium','Low':'low' };
+const STATUS_CLS  = { 'Open':'open','In Progress':'inprogress','Fixed':'fixed',"Won't Fix":'wontfix' };
+
+function getStatus(key)   { return (progress[key]||{}).status   || 'Open'; }
+function getAssignee(key) { return (progress[key]||{}).assignee || ''; }
+function getNotes(key)    { return (progress[key]||{}).notes    || ''; }
+
+function saveProgress(key, field, val) {
+  if (!progress[key]) progress[key] = { status:'Open', assignee:'', notes:'' };
+  progress[key][field] = val;
+  saveProgressToStorage();
+  renderSummary();
+}
+
+function renderTable() {
+  const search   = document.getElementById('search-input').value.toLowerCase();
+  const fType    = document.getElementById('filter-type').value;
+  const fPrio    = document.getElementById('filter-priority').value;
+  const fStatus  = document.getElementById('filter-status').value;
+
+  let filtered = allIssues.filter(i => {
+    if (activeTab !== 'All' && i.food_partner !== activeTab) return false;
+    if (fType   && i.type     !== fType)   return false;
+    if (fPrio   && i.priority !== fPrio)   return false;
+    if (fStatus && getStatus(i.key) !== fStatus) return false;
+    if (search  && !`${i.item_name} ${i.detail} ${i.food_partner}`.toLowerCase().includes(search)) return false;
+    return true;
+  });
+
+  // Sort: High first, then by type severity, then row_num
+  const typeOrder = {'Tag Conflict':0,'Incorrect Tag':1,'Missing Tag':2,'Typo':3};
+  const prioOrder = {'High':0,'Medium':1,'Low':2};
+  filtered.sort((a,b) => prioOrder[a.priority]-prioOrder[b.priority] || typeOrder[a.type]-typeOrder[b.type] || a.row_num-b.row_num);
+
+  document.getElementById('result-count').textContent = `${filtered.length} issue${filtered.length===1?'':'s'}`;
+
+  const tbody = document.getElementById('issue-tbody');
+  const empty = document.getElementById('empty-state');
+
+  if (filtered.length === 0) {
+    tbody.innerHTML = '';
+    empty.style.display = 'block';
+    return;
+  }
+  empty.style.display = 'none';
+
+  tbody.innerHTML = filtered.map(issue => {
+    const key     = issue.key;
+    const status  = getStatus(key);
+    const statusCls = STATUS_CLS[status] || 'open';
+    return `<tr>
+      <td><span class="row-num">${issue.row_num}</span></td>
+      <td>
+        <div class="item-name">${esc(issue.item_name)}</div>
+        <div class="item-desc">${esc(issue.food_partner)}${issue.description ? ' · ' + esc(issue.description.slice(0,80)) + (issue.description.length>80?'…':'') : ''}</div>
+      </td>
+      <td><span class="badge badge-${TYPE_BADGE[issue.type]}">${issue.type}</span></td>
+      <td><span class="badge badge-${PRIO_BADGE[issue.priority]}">${issue.priority}</span></td>
+      <td>
+        <div class="detail-text">${esc(issue.detail)}</div>
+        <div class="fix-text" style="margin-top:5px">→ ${esc(issue.fix)}</div>
+      </td>
+      <td>
+        <select class="status-sel status-${statusCls}" onchange="saveProgress('${esc(key)}','status',this.value);this.className='status-sel status-'+(${JSON.stringify(STATUS_CLS)}[this.value]||'open')">
+          ${['Open','In Progress','Fixed',"Won't Fix"].map(s=>`<option${status===s?' selected':''}>${s}</option>`).join('')}
+        </select>
+      </td>
+      <td><input class="assignee-input" placeholder="Name…" value="${esc(getAssignee(key))}" onchange="saveProgress('${esc(key)}','assignee',this.value)" /></td>
+      <td><textarea class="notes-input" placeholder="Notes…" onchange="saveProgress('${esc(key)}','notes',this.value)">${esc(getNotes(key))}</textarea></td>
+    </tr>`;
+  }).join('');
+}
+
+function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+
+// ── Persistence ────────────────────────────────────────────────────────────
+const STORAGE_KEY = 'hungry_menu_audit_progress';
+
+function saveProgressToStorage() {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ csvFilename, progress, savedAt: new Date().toISOString() })); } catch {}
+}
+
+function loadProgressFromStorage() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return;
+    const data = JSON.parse(raw);
+    if (data.progress) progress = data.progress;
+  } catch {}
+}
+
+function exportProgress() {
+  const data = { csvFilename, exportedAt: new Date().toISOString(), progress };
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type:'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `menu-audit-progress-${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+}
+
+function importProgress(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const data = JSON.parse(e.target.result);
+      if (data.progress) { progress = data.progress; saveProgressToStorage(); renderSummary(); renderTable(); alert('Progress imported!'); }
+      else { alert('Invalid progress file.'); }
+    } catch { alert('Could not read file.'); }
+  };
+  reader.readAsText(file);
+  event.target.value = '';
+}
+
+function importProgressUploadScreen(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const data = JSON.parse(e.target.result);
+      if (data.progress) { progress = data.progress; alert('Progress loaded! Now upload your CSV to see the dashboard.'); }
+    } catch { alert('Could not read file.'); }
+  };
+  reader.readAsText(file);
+  event.target.value = '';
+}
+</script>
+</body>
+</html>
