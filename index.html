@@ -89,6 +89,7 @@ td{padding:11px 14px;border-bottom:1px solid var(--grey);vertical-align:top}
 tr:last-child td{border-bottom:none}
 tr:hover td{background:#fdf8f8}
 .item-name{font-weight:600;font-size:13px;margin-bottom:2px;color:var(--blue)}
+.item-partner{font-size:12px;font-weight:700;color:var(--magenta);margin-bottom:2px}
 .item-desc{font-size:11px;color:#888;margin-top:3px;line-height:1.45}
 .row-num{color:#bbb;font-size:11px}
 
@@ -218,6 +219,9 @@ tr:hover td{background:#fdf8f8}
   <!-- Controls -->
   <div class="controls">
     <input type="text" id="search-input" placeholder="Search item name or detail…" oninput="renderTable()" style="min-width:220px">
+    <select id="filter-partner" onchange="setTab(this.value);syncPartnerDropdown()">
+      <option value="All">All Food Partners</option>
+    </select>
     <select id="filter-type" onchange="renderTable()">
       <option value="">All Issue Types</option>
       <option value="Tag Conflict">Tag Conflict</option>
@@ -488,13 +492,20 @@ function renderTabs() {
   const partners = ['All', ...new Set(allIssues.map(i=>i.food_partner).sort())];
   document.getElementById('tabs').innerHTML = partners.map(p => {
     const count = p === 'All' ? allIssues.length : allIssues.filter(i=>i.food_partner===p).length;
-    return `<div class="tab${activeTab===p?' active':''}" onclick="setTab('${p.replace(/'/g,"\\'")}')">
+    return `<div class="tab${activeTab===p?' active':''}" onclick="setTab('${p.replace(/'/g,"\\'")}');syncPartnerDropdown()">
       ${p} <span class="count">${count}</span>
     </div>`;
   }).join('');
+  // Populate dropdown
+  const dd = document.getElementById('filter-partner');
+  const current = dd.value;
+  dd.innerHTML = ['All', ...partners.slice(1)].map(p =>
+    `<option value="${p}"${p===activeTab?' selected':''}>${p === 'All' ? 'All Food Partners' : p}</option>`
+  ).join('');
 }
 
 function setTab(p) { activeTab = p; renderTabs(); renderTable(); }
+function syncPartnerDropdown() { document.getElementById('filter-partner').value = activeTab; }
 
 // ── Table ──────────────────────────────────────────────────────────────────
 const TYPE_BADGE  = { 'Tag Conflict':'conflict','Incorrect Tag':'incorrect','Missing Tag':'missing','Typo':'typo' };
@@ -551,8 +562,9 @@ function renderTable() {
     return `<tr>
       <td><span class="row-num">${issue.row_num}</span></td>
       <td>
+        <div class="item-partner">${esc(issue.food_partner)}</div>
         <div class="item-name">${esc(issue.item_name)}</div>
-        <div class="item-desc">${esc(issue.food_partner)}${issue.description ? ' · ' + esc(issue.description.slice(0,80)) + (issue.description.length>80?'…':'') : ''}</div>
+        ${issue.description ? `<div class="item-desc">${esc(issue.description.slice(0,90))}${issue.description.length>90?'…':''}</div>` : ''}
       </td>
       <td><span class="badge badge-${TYPE_BADGE[issue.type]}">${issue.type}</span></td>
       <td><span class="badge badge-${PRIO_BADGE[issue.priority]}">${issue.priority}</span></td>
